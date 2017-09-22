@@ -65,6 +65,7 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_1) {
 	MyString s1 = "Hello World123123123";
 	MyString s2{ 50 };
 	s2 = s1;
+
 	assert(s1.length() == s2.length());
 	assert(s2.capacity() == 50);
 }
@@ -308,6 +309,58 @@ DECLARE_OOP_TEST(string_test_ConcatenationTest_9) {
 		assert(s1.begin()[i] == str1[i]);
 	}
 	assert(s1.length() + s2.length() + 1 == strlen(str1) + strlen(str2) + 1);
+}
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_10) {
+	MyString s1{ "Hello" };
+	MyString s2{ "Hello" };
+	s1 += s2;
+	char str1[200] = "Hello";
+	char str2[72] = "Hello";
+	strcat_s(str1, sizeof(str1) / sizeof(char), str2);
+
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1.begin()[i] == str1[i]);
+	}
+	assert(s1.length() + s2.length() + 1 == strlen(str1) + strlen(str2) + 1);
+}
+
+
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_11) {
+	MyString s1{ "Hello World" };
+	MyString s2 = s1;
+	MyString s3 = s1 + s2;
+	char * resultString = "Hello WorldHello World";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] == resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
+}
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_12) {
+	MyString s1{ "Hello World Hello World" };
+	MyString s2{ "Hm... Maybe it`s working."};
+	MyString s3 = s1 + s2;
+	char * resultString = "Hello World Hello WorldHm... Maybe it`s working.";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] == resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
+}
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_13) {
+	MyString s1{ "Hello1231231231" };
+	MyString s2{ " " };
+	MyString s3 = s1 + s2;
+	char * resultString = "Hello1231231231 ";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] == resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
 }
 
 

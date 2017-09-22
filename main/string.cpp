@@ -196,6 +196,7 @@ MyString & MyString::operator += (MyString _string) {
 	else {
 		/* If static buffer has free memory - concatenation strings without allocate memory* */
 		if (length() + _string.length()+1 < MAX_STATIC_SIZE) {
+			m_StaticBuffer[length() + _string.length() + 1] = NULL;
 			strcat_s(m_StaticBuffer,capacity(), _string.m_StaticBuffer);
 		}
 		else {
@@ -228,6 +229,12 @@ MyString & MyString::operator += (MyString _string) {
 		}
 	}
 	return  * this;
+}
+MyString MyString::operator+(MyString _string) const
+{
+	MyString resultString = *this;
+	resultString += _string;
+	return resultString;
 }
 /*!
 * Realization of system functions 

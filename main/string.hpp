@@ -37,6 +37,7 @@ public:
 	MyString & operator  = (MyString && _string);
 
 	MyString & operator += (MyString _string);
+	MyString operator + (MyString _string) const;
 
 	//Methods
 	int	   length()const;
