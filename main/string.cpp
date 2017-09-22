@@ -80,18 +80,28 @@ MyString & MyString::operator = (const MyString & _string)
 	_string data. If free memory is had - free resources and only copy. If free memory isn`t had - delete and
 	allocate new segment which have size oldCapacity*2 */
 	int currentCapacity = capacity();
+	int memoryFactor = 1;
 	if (this->IsMemAllocate()) {
 		
 		if (capacity() < _string.length()+1) {
-			/**<Find memory factor for expand array memory multiples of two*/
-			
-			int memoryFactor = FactorExpandMemoryMultipleTwo(capacity(), _string.length());
-			delete[] m_EndOfStorage;
-			m_EndOfStorage = new char[currentCapacity *memoryFactor];
-			m_DataStart = m_EndOfStorage;
+			/**<Find magic memory factor:D* */
+			while (capacity() <= _string.length()) {
+				delete[]m_EndOfStorage;
+				memoryFactor *= 2;
+				
+				m_EndOfStorage = new char[currentCapacity * memoryFactor];
+					
+				for (int i = 0; i < currentCapacity * memoryFactor; i++) {
+					m_EndOfStorage[i] = NULL;
+					}
+				
+				m_EndOfStorage[currentCapacity] = '/0';
 
+				m_DataStart = m_EndOfStorage;
+				m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
+			}
 			memcpy(m_EndOfStorage, _string.m_DataStart, _string.length() + 1);
-			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
+			
 			
 			return *this;
 		}
@@ -150,76 +160,6 @@ MyString & MyString::operator  = (MyString && _string)
 }
 
 MyString & MyString::operator += (MyString _string) {
-	
-	if (IsMemAllocate()) {
-		if ( capacity() >=  length()+_string.length()+1) {
-			strcat_s(m_EndOfStorage,capacity(), _string.m_EndOfStorage);
-		}
-		else {
-			/**<Init temponary variables * */
-			char * tempString = new char[length() + 1];
-			int currentCapacity = capacity();
-			int memoryFactor = FactorExpandMemoryMultipleTwo(capacity(), length()+_string.length());
-			
-			/**<Copy source to temp string * */
-			memcpy(tempString, m_EndOfStorage, length() + 1);
-
-			/* Memory operations and allocation* */
-			/* Free old allocated memory and allocate new * */
-			delete[] m_EndOfStorage;
-			m_EndOfStorage = new char[currentCapacity *memoryFactor];
-			
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
-
-			/* Concatenation strings* */
-			if (_string.IsMemAllocate()) {
-				strcat_s(m_EndOfStorage, capacity(), _string.m_EndOfStorage);
-			}
-			else {
-				strcat_s(m_EndOfStorage, capacity(), _string.m_StaticBuffer);
-			}
-			/* Delete temponary buffer* */
-			delete[] tempString;
-		}
-
-	}
-	else {
-		/* If static buffer has free memory - concatenation strings without allocate memory* */
-		if (length() + _string.length()+1 < 16) {
-			strcat_s(m_StaticBuffer,capacity(), _string.m_StaticBuffer);
-		}
-		else {
-			/**<Init temponary variables * */
-			int currentLength = length();
-			long allocateBuffer = length() + _string.length() + 1;
-			char * tempString = new char[length() + 1];
-			
-			/**<Copy source to temp string * */
-			memcpy(tempString, m_StaticBuffer, length() + 1);
-
-			/* Allocate new  memory* */
-			m_EndOfStorage = new char[allocateBuffer];
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + allocateBuffer;
-			
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString,currentLength+1);
-			
-			/* Concatenation strings* */
-			if (_string.IsMemAllocate()) {
-				strcat_s(m_EndOfStorage, capacity(), _string.m_EndOfStorage);
-			}
-			else {
-				strcat_s(m_EndOfStorage, capacity(), _string.m_StaticBuffer);
-			}
-
-			/* Delete temponary buffer* */
-			delete[] tempString;
-		}
-	}
 	return  * this;
 }
 /*!
@@ -230,17 +170,6 @@ bool MyString::IsMemAllocate()const
 {
 	if (m_DataStart != m_StaticBuffer) { return true; }
 	return false;
-}
-
-long MyString::FactorExpandMemoryMultipleTwo(long _capacity, long _strLength)
-{
-	int memFactor = 1;
-	while (_capacity <= _strLength+1)
-	{
-		memFactor *= 2;
-		_capacity *= memFactor;
-	}
-	return memFactor;
 }
 
 
