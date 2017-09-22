@@ -34,6 +34,9 @@ public:
 	MyString & operator = (const  MyString & _string);
 	MyString(MyString && _string);
 	MyString & operator  = (MyString && _string);
+
+	MyString & operator += (MyString _string);
+
 	//Methods
 	int	   length()const;
 	
@@ -45,7 +48,7 @@ public:
 	
 	bool   empty();
 	
-	void   reserve(long N);
+	void   reserve(long _N);
 	
 	char * begin();
 	

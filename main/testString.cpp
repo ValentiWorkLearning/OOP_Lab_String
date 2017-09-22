@@ -11,11 +11,23 @@ DECLARE_OOP_TEST(string_test_Create_String_With_N_Characters_Reserved) {
 	assert(s1.capacity() == 60);
 }
 
+DECLARE_OOP_TEST(string_test_Create_String_With_0_Characters_Reserved) {
+	MyString s1{ 0 };
+	assert(s1.capacity() == 0);
+}
+
 DECLARE_OOP_TEST(string_test_Length_String) {
 	char * testString = "Some String";
-	MyString s1{ "SomeString" };
-	assert(s1.length() != strlen(testString));
+	MyString s1{ "Some String" };
+	assert(s1.length() == strlen(testString));
 }
+
+DECLARE_OOP_TEST(string_test_Length_String_1) {
+	char * testString = " ";
+	MyString s1{ " " };
+	assert(s1.length() == strlen(testString));
+}
+
 
 DECLARE_OOP_TEST(string_test_Copy_Constructor) {
 	MyString s1{ "SomeString" };
@@ -26,6 +38,17 @@ DECLARE_OOP_TEST(string_test_Copy_Constructor) {
 		assert(s1.begin()[i] == s1.begin()[i]);
 	}
 }
+
+DECLARE_OOP_TEST(string_test_Copy_Constructor_1) {
+	MyString s1{ " " };
+	MyString s2 = s1;
+
+	assert(s1.length() == s2.length());
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1.begin()[i] == s1.begin()[i]);
+	}
+}
+
 
 DECLARE_OOP_TEST(string_test_Exeption_Incorrect_Size) {
 	try
@@ -45,7 +68,7 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_1) {
 	MyString s2{ 50 };
 	s2 = s1;
 	assert(s1.length() == s2.length());
-	assert(s2.capacity() == 50);;
+	assert(s2.capacity() == 50);
 }
 
 DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_2) {
@@ -109,6 +132,63 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_End_1) {
 	}
 
 }
+
+DECLARE_OOP_TEST(string_test_ReserveTest_1) {
+	MyString s1;
+	s1.reserve(100);
+	assert(s1.capacity() == 116);
+
+}
+
+DECLARE_OOP_TEST(string_test_ReserveTest_2) {
+	MyString s1 = "Hello World";
+	char * etalonString = "Hello World";
+	s1.reserve(100);
+	assert(s1.capacity() == 116);
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1.begin()[i] == etalonString[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_ReserveTest_3) {
+	MyString s1 = "Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ";
+	char * etalonString = "Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ";
+	s1.reserve(100);
+
+	assert(s1.capacity() == 209);
+	
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1.begin()[i] == etalonString[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_ReserveTest_4) {
+	MyString s1{ 50 };
+	s1.reserve(100);
+
+	assert(s1.capacity() == 150);
+}
+
+DECLARE_OOP_TEST(string_test_ReserveTest_5) {
+	MyString s1{ 50 };
+	MyString s2 = "HELLO WORLD";
+	s1 = s2;
+	s1.reserve(100);
+	assert(s1.capacity() == 150);
+
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1.begin()[i] == s2.begin()[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_ReserveTest_6) {
+	MyString s1{ 0 };
+	s1.reserve(100);
+	assert(s1.capacity() == 100);
+}
+
+
+
 
 
 

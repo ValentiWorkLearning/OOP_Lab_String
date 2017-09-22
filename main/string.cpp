@@ -3,14 +3,16 @@
 /*!
 * Realization of constructors
 */
-MyString::MyString( ){
+MyString::MyString( )
+{
 	m_DataStart  = m_StaticBuffer;
 	m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
 	for (unsigned int i = 0; i < strlen(m_StaticBuffer)+1; i++) {
 		m_StaticBuffer[i] = 0;
 	}
 }
-MyString::MyString( const char *_string) {
+MyString::MyString( const char *_string) 
+{
 
 	if (strlen(_string) < 16) {
 		/**< Init buffer array. */
@@ -24,10 +26,11 @@ MyString::MyString( const char *_string) {
 		m_EndOfStorage = new char[strlen(_string)+1];
 		memcpy(m_EndOfStorage, _string, strlen(_string)+1);
 		m_DataStart = m_EndOfStorage;
-		m_DataFinish = m_EndOfStorage + strlen(_string);
+		m_DataFinish = m_EndOfStorage + strlen(_string)+1;
 	}
 }
-MyString::MyString(int _N) {
+MyString::MyString(int _N) 
+{
 	if (_N < 0) {
 		throw std::exception("Incorrect size");
 	}
@@ -46,7 +49,8 @@ MyString::MyString(int _N) {
 /*!
 * Realization of copy constructor,assignment operator, move constructor and move operator
 */
-MyString::MyString(const MyString & _string) {
+MyString::MyString(const MyString & _string) 
+{
 	
 	/**Create a copy. If memory allocated for _string - allocate memory in copy string. 
 	If not - copy only static array*/
@@ -66,7 +70,8 @@ MyString::MyString(const MyString & _string) {
 	}
 }
 
-MyString & MyString::operator = (const MyString & _string) {
+MyString & MyString::operator = (const MyString & _string) 
+{
 	/**<Check self-appropriation  * */
 	if (&_string == this) {
 		return *this;
@@ -142,7 +147,8 @@ MyString::MyString(MyString && _string)
 	_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
 }
 
-MyString & MyString::operator  = (MyString && _string) {
+MyString & MyString::operator  = (MyString && _string) 
+{
 	if (&_string == this) {
 		return * this;
 	}
@@ -152,11 +158,16 @@ MyString & MyString::operator  = (MyString && _string) {
 	std::swap(m_StaticBuffer, _string.m_StaticBuffer);
 	return * this;
 }
+
+MyString & MyString::operator += (MyString _string) {
+	return  * this;
+}
 /*!
 * Realization of system functions 
 */
 
-bool MyString::IsMemAllocate()const {
+bool MyString::IsMemAllocate()const
+{
 	if (m_DataStart != m_StaticBuffer) { return true; }
 	return false;
 }
@@ -165,7 +176,8 @@ bool MyString::IsMemAllocate()const {
 /*!
 * Realization of public  methods
 */
-int MyString::length()const{
+int MyString::length()const
+{
 	if (IsMemAllocate())return strlen(m_EndOfStorage);
 	return strlen(m_StaticBuffer);
 }
@@ -175,7 +187,8 @@ int MyString::capacity()
 	return m_DataFinish - m_DataStart;
 }
 
-void MyString::clear(){
+void MyString::clear()
+{
 	if (IsMemAllocate()) {
 		delete[] m_EndOfStorage;
 	}
@@ -194,12 +207,37 @@ bool MyString::empty()
 	return false;
 }
 
-char * MyString::begin() {
+void MyString::reserve(long _N)
+{
+	/**<Copy this->string data and allocate new memory. If buffer is used - allocate memory in m_EndOfData.* */
+
+	char * tempString = new char[ length()+1 ];
+	int currentCapacity = capacity();
+
+	if (IsMemAllocate()) { 
+		memcpy(tempString, m_EndOfStorage, length() + 1);
+		delete[] m_EndOfStorage;
+	}
+	else {
+		memcpy(tempString, m_StaticBuffer, length() + 1);
+	}
+
+	m_EndOfStorage = new char[currentCapacity + _N];
+	memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
+	m_DataStart = m_EndOfStorage;
+	m_DataFinish = m_DataStart + currentCapacity + _N;
+
+	delete[] tempString;
+}
+
+char * MyString::begin() 
+{
 
 	return m_DataStart;
 }
 
-char * MyString::end() {
+char * MyString::end() 
+{
 
 	return m_DataStart+length();
 
@@ -210,7 +248,8 @@ char * MyString::end() {
 * Realization of destructor
 */
 
-MyString::~MyString() {
+MyString::~MyString() 
+{
 //	std::cout << "Destructor";
 	if(IsMemAllocate())delete [] this->m_EndOfStorage;
 }
