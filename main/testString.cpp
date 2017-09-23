@@ -29,6 +29,12 @@ DECLARE_OOP_TEST(string_test_Length_String_1) {
 	assert(s1.length() == strlen(testString));
 }
 
+DECLARE_OOP_TEST(string_test_EmptyTest) {
+	MyString s1{ "Hello world" };
+	s1.clear();
+	assert( s1.empty() == true);
+}
+
 DECLARE_OOP_TEST(string_test_Copy_Constructor) {
 	MyString s1{ "SomeString" };
 	MyString s2 = s1;
