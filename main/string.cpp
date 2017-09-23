@@ -205,7 +205,6 @@ MyString & MyString::operator += (MyString _string) {
 	else {
 		/* If static buffer has free memory - concatenation strings without allocate memory* */
 		if (length() + _string.length()+1 < MAX_STATIC_SIZE) {
-			 //strcat_s(m_StaticBuffer,capacity(), _string.m_StaticBuffer);
 			memcpy(m_StaticBuffer + length(), _string.m_StaticBuffer, _string.length() + 1);
 			m_DataStart = m_StaticBuffer;
 			m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
