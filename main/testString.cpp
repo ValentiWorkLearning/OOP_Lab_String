@@ -13,7 +13,7 @@ DECLARE_OOP_TEST(string_test_Create_String_With_N_Characters_Reserved) {
 }
 
 DECLARE_OOP_TEST(string_test_Create_String_With_0_Characters_Reserved) {
-	MyString s1{ 0 };
+	MyString s1{ 0L };
 	assert(s1.capacity() == 0);
 }
 
@@ -74,6 +74,7 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_1) {
 	s2 = s1;
 
 	assert(s1.length() == s2.length());
+	int i = s2.capacity();
 	assert(s2.capacity() == 50);
 }
 
@@ -187,7 +188,7 @@ DECLARE_OOP_TEST(string_test_ReserveTest_5) {
 }
 
 DECLARE_OOP_TEST(string_test_ReserveTest_6) {
-	MyString s1{ 0 };
+	MyString s1( (long)0 );
 	s1.reserve(100);
 	assert(s1.capacity() == 100);
 }
@@ -405,6 +406,70 @@ DECLARE_OOP_TEST(string_test_ConcatenationTest_16) {
 	}
 	assert(s1.length() + s2.length() == s3.length());
 }
+
+DECLARE_OOP_TEST(string_test_OperatorIndexAccessReadWrite_1) {
+	MyString s1{ "Hello World" };;
+	s1[3L] = 'F';
+	assert(s1[3L] == 'F');
+}
+
+DECLARE_OOP_TEST(string_test_OperatorIndexAcessReadWrite_2) {
+	MyString s1{ "Hello World Hello World" };
+	char testChar[22] = "TEST ACCESS TO ";
+	
+	for (long i = 0L; i < strlen(testChar); i++) {
+		s1[(long)i] = testChar[i];
+	}
+	
+	for (long i = 0L; i < strlen(testChar); i++) {
+		assert(s1[(long)i] == testChar[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_OperatorIndexAccessReadWrite_3) {
+	MyString s1{ 24 };
+	char testChar[22] = "TEST ACCESS TO ";
+	
+	for (long i = 0L; i < strlen(testChar); i++) {
+		s1[(long)i] = testChar[i];
+	}
+	
+	for (long i = 0L; i < strlen(testChar); i++) {
+		assert(s1[(long)i] == testChar[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_OperatorIndexAccessReadWrite_4) {
+	MyString s1{ 20 };
+	try
+	{
+		s1[25] = 'F';
+	
+		assert(!"Exception must have been thrown");
+	}
+	catch (std::logic_error &e) {
+
+		assert(!strcmp(e.what(), "Out of range"));
+	}
+}
+
+DECLARE_OOP_TEST(string_test_OperatorIndexAccessReadWrite_5) {
+	MyString s1{ "Hello World" };
+	try
+	{
+		if (s1[25] == 'F');
+		assert(!"Exception must have been thrown");
+	}
+	catch (std::logic_error &e) {
+
+		assert(!strcmp(e.what(), "Out of range"));
+	}
+}
+
+
+
+
+
 
 
 
