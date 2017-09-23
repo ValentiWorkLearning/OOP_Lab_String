@@ -141,7 +141,15 @@ MyString::MyString(MyString && _string)
 {
 		
 	memcpy(m_StaticBuffer,_string.m_StaticBuffer,strlen(_string.m_StaticBuffer) + 1);
-	_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
+	if (_string.IsMemAllocate()) {
+		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
+	}
+	else {
+		m_DataStart = m_StaticBuffer;
+		m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
+		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
+	}
+	
 }
 
 MyString & MyString::operator  = (MyString && _string) 
@@ -149,6 +157,7 @@ MyString & MyString::operator  = (MyString && _string)
 	if (&_string == this) {
 		return * this;
 	}
+	
 	std::swap(m_DataStart, _string.m_DataStart);
 	std::swap(m_DataFinish, _string.m_DataFinish);
 	std::swap(m_EndOfStorage, _string.m_EndOfStorage);
@@ -160,7 +169,7 @@ MyString & MyString::operator += (MyString _string) {
 	
 	if (IsMemAllocate()) {
 		if ( capacity() >=  length()+_string.length()+1) {
-			strcat_s(m_EndOfStorage,capacity(), _string.m_EndOfStorage);
+		strcat_s(m_EndOfStorage,capacity(), _string.m_EndOfStorage);
 		}
 		else {
 			/**<Init temponary variables * */
@@ -196,8 +205,10 @@ MyString & MyString::operator += (MyString _string) {
 	else {
 		/* If static buffer has free memory - concatenation strings without allocate memory* */
 		if (length() + _string.length()+1 < MAX_STATIC_SIZE) {
-			m_StaticBuffer[length() + _string.length() + 1] = NULL;
-			strcat_s(m_StaticBuffer,capacity(), _string.m_StaticBuffer);
+			 //strcat_s(m_StaticBuffer,capacity(), _string.m_StaticBuffer);
+			memcpy(m_StaticBuffer + length(), _string.m_StaticBuffer, _string.length() + 1);
+			m_DataStart = m_StaticBuffer;
+			m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
 		}
 		else {
 			/**<Init temponary variables * */

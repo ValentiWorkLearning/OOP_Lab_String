@@ -1,6 +1,7 @@
 #include "string.hpp"
 #include "testlib.hpp"
 
+
 DECLARE_OOP_TEST(string_test_Create_Empty_String) {
 	MyString s1;
 	assert(s1.empty());
@@ -352,16 +353,54 @@ DECLARE_OOP_TEST(string_test_ConcatenationTest_12) {
 }
 
 DECLARE_OOP_TEST(string_test_ConcatenationTest_13) {
-	MyString s1{ "Hello1231231231" };
-	MyString s2{ " " };
+	MyString s1{ "abc" };
+	MyString s2{ "Hello World" };
+	MyString s3 = (s1 + s2);
+	char * resultString = "abcHello World";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] ==resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
+}
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_14) {
+	MyString s1{ " " };
+	MyString s2{ "Hello World" };
 	MyString s3 = s1 + s2;
-	char * resultString = "Hello1231231231 ";
+	char * resultString = " Hello World";
 
 	for (int i = 0; i < s3.length(); i++) {
 		assert(s3.begin()[i] == resultString[i]);
 	}
 	assert(s1.length() + s2.length() == s3.length());
 }
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_15) {
+	MyString s1{ "Hello" };
+	MyString s2{ "Hello" };
+	MyString s3 = s1 + s2;
+	char * resultString = "HelloHello";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] == resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
+}
+
+DECLARE_OOP_TEST(string_test_ConcatenationTest_16) {
+	MyString s1{ " " };
+	MyString s2{ " " };
+	MyString s3 = s1 + s2;
+	char * resultString = "  ";
+
+	for (int i = 0; i < s3.length(); i++) {
+		assert(s3.begin()[i] == resultString[i]);
+	}
+	assert(s1.length() + s2.length() == s3.length());
+}
+
+
 
 
 
