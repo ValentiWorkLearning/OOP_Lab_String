@@ -26,7 +26,7 @@ public:
 	
 	MyString( const char * _string);
 
-	MyString( int _N );
+	MyString( long _N );
 	//MyString( int N );
 
 	//Operators
@@ -39,10 +39,14 @@ public:
 	MyString & operator += (MyString _string);
 	MyString operator + (MyString _string) const;
 
+	char operator [] (long _index) const;
+	char & operator [] (long _index);
+
+
 	//Methods
-	int	   length()const;
+	long   length()const;
 	
-	int	   capacity();
+	long   capacity()const;
 	
 	char * c_str();
 	
@@ -52,7 +56,7 @@ public:
 	
 	void   reserve(long _N);
 	
-	char * begin();
+	char * begin() const;
 	
 	char * end();
 	

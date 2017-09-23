@@ -8,7 +8,7 @@ MyString::MyString( )
 	m_DataStart  = m_StaticBuffer;
 	m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
 
-	for (unsigned int i = 0; i < strlen(m_StaticBuffer)+1; i++) {
+	for (unsigned long i = 0; i < strlen(m_StaticBuffer)+1; i++) {
 		m_StaticBuffer[i] = 0;
 	}
 }
@@ -31,15 +31,15 @@ MyString::MyString( const char *_string)
 		m_DataFinish = m_EndOfStorage + strlen(_string)+1;
 	}
 }
-MyString::MyString(int _N) 
+MyString::MyString(long _N) 
 {
-	if (_N < 0) {
+	if (_N < 0L) {
 		throw std::exception("Incorrect size");
 	}
 
-	m_EndOfStorage = new char[_N + 1];
+	m_EndOfStorage = new char[_N + 1L];
 
-	for (int i = 0; i < _N; i++) {
+	for (long i = 0; i < _N; i++) {
 		m_EndOfStorage[i] = NULL;
 	}
 	m_EndOfStorage[_N] = '/0';
@@ -83,13 +83,13 @@ MyString & MyString::operator = (const MyString & _string)
 	/**Copy assigment operator. If memmory allocated - check capacity this->m_EndOfStorage for copy
 	_string data. If free memory is had - free resources and only copy. If free memory isn`t had - delete and
 	allocate new segment which have size oldCapacity*2 */
-	int currentCapacity = capacity();
+	long currentCapacity = capacity();
 	if (this->IsMemAllocate()) {
 		
 		if (capacity() < _string.length()+1) {
 			
 			/**<Find memory factor for expand array memory multiples of two*/
-			int memoryFactor = FactorMemoryMultipleTwo(capacity(), _string.length());
+			long memoryFactor = FactorMemoryMultipleTwo(capacity(), _string.length());
 			delete[] m_EndOfStorage;
 
 			m_EndOfStorage = new char[currentCapacity *memoryFactor];
@@ -109,7 +109,7 @@ MyString & MyString::operator = (const MyString & _string)
 			memcpy(m_EndOfStorage, _string.m_DataStart, _string.length() + 1);
 
 			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_DataFinish;
+			m_DataFinish = m_EndOfStorage+currentCapacity;
 			return *this;
 		}
 	}
@@ -174,8 +174,8 @@ MyString & MyString::operator += (MyString _string) {
 		else {
 			/**<Init temponary variables * */
 			char * tempString = new char[length() + 1];
-			int currentCapacity = capacity();
-			int memoryFactor = FactorMemoryMultipleTwo(capacity(), length()+_string.length());
+			long currentCapacity = capacity();
+			long memoryFactor = FactorMemoryMultipleTwo(capacity(), length()+_string.length());
 			
 			/**<Copy source to temp string * */
 			memcpy(tempString, m_EndOfStorage, length() + 1);
@@ -211,7 +211,7 @@ MyString & MyString::operator += (MyString _string) {
 		}
 		else {
 			/**<Init temponary variables * */
-			int currentLength = length();
+			long currentLength = length();
 			long allocateBuffer = length() + _string.length() + 1;
 			char * tempString = new char[length() + 1];
 			
@@ -240,11 +240,28 @@ MyString & MyString::operator += (MyString _string) {
 	}
 	return  * this;
 }
+
 MyString MyString::operator+(MyString _string) const
 {
 	MyString resultString = *this;
 	resultString += _string;
 	return resultString;
+}
+
+char MyString::operator[](long _index) const
+{
+	if (_index > capacity()-1) {
+		throw std::logic_error("Out of range");
+	}
+	return begin()[_index];
+}
+
+char & MyString::operator[](long _index)
+{
+	if (_index > capacity() - 1) {
+		throw std::logic_error("Out of range");
+	}
+	return begin()[_index];
 }
 /*!
 * Realization of system functions 
@@ -260,7 +277,7 @@ bool MyString::IsMemAllocate()const
 long MyString::FactorMemoryMultipleTwo(long _capacity, long _strLength)
 {
 	/* System method. Calculate a value which need to allocate new buffer which have size multiple two * */
-	int memFactor = 1;
+	long memFactor = 1;
 	while (_capacity <= _strLength+1)
 	{
 		memFactor *= 2;
@@ -273,15 +290,16 @@ long MyString::FactorMemoryMultipleTwo(long _capacity, long _strLength)
 /*!
 * Realization of public  methods
 */
-int MyString::length()const
+long MyString::length()const
 {
 	if (IsMemAllocate())return strlen(m_EndOfStorage);
 	return strlen(m_StaticBuffer);
 }
 
-int MyString::capacity()
+long MyString::capacity()const
 {
-	return m_DataFinish - m_DataStart;
+	long stringCapacity = m_DataFinish - m_DataStart;
+	return stringCapacity;
 }
 
 void MyString::clear()
@@ -290,7 +308,7 @@ void MyString::clear()
 		delete[] m_EndOfStorage;
 	}
 	else {
-		for (int i = 0; i < MAX_STATIC_SIZE; i++) {
+		for (long i = 0; i < MAX_STATIC_SIZE; i++) {
 			m_StaticBuffer[i] = 0;
 		}
 	}
@@ -309,7 +327,7 @@ void MyString::reserve(long _N)
 	/**<Copy this->string data and allocate new memory. If buffer is used - allocate memory in m_EndOfData.* */
 
 	char * tempString = new char[ length()+1 ];
-	int currentCapacity = capacity();
+	long currentCapacity = capacity();
 
 	if (IsMemAllocate()) { 
 		memcpy(tempString, m_EndOfStorage, length() + 1);
@@ -327,7 +345,7 @@ void MyString::reserve(long _N)
 	delete[] tempString;
 }
 
-char * MyString::begin() 
+char * MyString::begin()const 
 {
 
 	return m_DataStart;
