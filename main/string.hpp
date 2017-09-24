@@ -22,11 +22,11 @@ private:
 	long FactorMemoryMultipleTwo(long _capacity, long _strLength);
 public:
 	
-	MyString( );
+	explicit MyString( );
 	
-	MyString( const char * _string);
+	explicit MyString( const char * _string);
 
-	MyString( long _N );
+	explicit MyString( long _N );
 	//MyString( int N );
 
 	//Operators
