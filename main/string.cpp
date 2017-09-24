@@ -12,6 +12,7 @@ MyString::MyString( )
 		m_StaticBuffer[i] = 0;
 	}
 }
+
 MyString::MyString( const char *_string) 
 {
 
@@ -31,6 +32,7 @@ MyString::MyString( const char *_string)
 		m_DataFinish = m_EndOfStorage + strlen(_string)+1;
 	}
 }
+
 MyString::MyString(long _N) 
 {
 	if (_N < 0L) {
@@ -132,7 +134,6 @@ MyString & MyString::operator = (const MyString & _string)
 	}
 	
 }
-
 
 MyString::MyString(MyString && _string)
 	:m_DataStart(_string.m_DataStart),
@@ -263,10 +264,10 @@ char & MyString::operator[](long _index)
 	}
 	return begin()[_index];
 }
+
 /*!
 * Realization of system functions 
 */
-
 bool MyString::IsMemAllocate()const
 {
 	/* System method.Return true if memory for m_EndOfStorage was allocated or return false if m_StaticBuffer was used* */
@@ -285,7 +286,6 @@ long MyString::FactorMemoryMultipleTwo(long _capacity, long _strLength)
 	}
 	return memFactor;
 }
-
 
 /*!
 * Realization of public  methods
@@ -361,11 +361,69 @@ char * MyString::end()
 	return m_DataStart+length();
 }
 
+void MyString::insert(long pos, const char * data)
+{
+	if (IsMemAllocate()) {
+		if (capacity() >= pos + strlen(data) + 1) {
+
+			if (this->empty()) {
+				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+				memcpy(begin() + pos, data, strlen(data) + 1);
+			}
+			else {
+				memcpy(begin() + pos, data, strlen(data) );
+			}
+		}
+		else {
+			/**<Init temponary variables * */
+			char * tempString = new char[length() + 1];
+			long currentCapacity = capacity();
+			long memoryFactor;
+
+			if (capacity() < pos) {
+				 memoryFactor= FactorMemoryMultipleTwo(capacity(), length() + strlen(data) + 1);
+			}
+
+			else
+			{
+				memoryFactor = FactorMemoryMultipleTwo(capacity(), pos +strlen(data)+1);
+			}
+
+			/**<Copy source to temp string * */
+			memcpy(tempString, m_EndOfStorage, length() + 1);
+
+			/* Memory operations and allocation* */
+			/* Free old allocated memory and allocate new * */
+			delete[] m_EndOfStorage;
+			m_EndOfStorage = new char[currentCapacity *memoryFactor];
+
+			/* Restore original string in new allocated buffer * */
+			memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
+			m_DataStart = m_EndOfStorage;
+			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
+
+			/* Fill spaces free area* */
+			for (long i = length(); i <= pos; i++) {
+				m_EndOfStorage[i] = ' ';
+			}
+
+			/* Copy data to position * */
+			if (this->empty()) { 
+				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+			}
+			memcpy(begin() + pos, data, strlen(data)+1);
+		
+		}
+	}
+}
+
+void MyString::erase(long pos, long len)
+{
+}
 
 /*!
 * Realization of destructor
 */
-
 MyString::~MyString() 
 {
 	if(IsMemAllocate())delete [] this->m_EndOfStorage;
@@ -374,7 +432,6 @@ MyString::~MyString()
 /*!
 * Realization of global user literal _s for declare MyString using "Some String"_s
 */
-
 MyString operator"" _s(const char * _string, std::size_t _size)
 {
 	return MyString( _string);
