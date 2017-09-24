@@ -42,7 +42,7 @@ MyString::MyString(long _N)
 	for (long i = 0; i < _N; i++) {
 		m_EndOfStorage[i] = NULL;
 	}
-	m_EndOfStorage[_N] = '/0';
+	m_EndOfStorage[_N] = '\0';
 
 	m_DataStart = m_EndOfStorage;
 	m_DataFinish = m_DataStart + _N;
