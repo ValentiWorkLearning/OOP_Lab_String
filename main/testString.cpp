@@ -566,6 +566,21 @@ DECLARE_OOP_TEST(string_test_c_str_4) {
 	delete[] str1;
 }
 
+DECLARE_OOP_TEST(string_test_Insert_Test_1) {
+	MyString s1{22};
+	s1.insert(20, "Hello world");
+
+}
+
+DECLARE_OOP_TEST(string_test_Insert_Test_2) {
+	MyString s1{ "Some Test String" };
+	s1.insert(20, "Hello world");
+
+	s1.insert(5, "TEST TEST");
+
+}
+
+
 
 
 
