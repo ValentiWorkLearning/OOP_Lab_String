@@ -302,10 +302,16 @@ long MyString::capacity()const
 	return stringCapacity;
 }
 
+char * MyString::c_str()
+{
+	if (IsMemAllocate())return m_EndOfStorage;
+	return m_StaticBuffer;
+}
+
 void MyString::clear()
 {
 	if (IsMemAllocate()) {
-		delete[] m_EndOfStorage;
+		delete m_EndOfStorage;
 	}
 	else {
 		for (long i = 0; i < MAX_STATIC_SIZE; i++) {
@@ -372,5 +378,4 @@ MyString::~MyString()
 MyString operator"" _s(const char * _string, std::size_t _size)
 {
 	return MyString( _string);
-
 }

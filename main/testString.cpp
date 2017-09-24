@@ -491,6 +491,52 @@ DECLARE_OOP_TEST(string_test_UserLiteral_s_2) {
 	}
 }
 
+DECLARE_OOP_TEST(string_test_c_str_1) {
+	MyString s1 = "Simple test c_str method"_s;
+	char * str1 = s1.c_str();
+	
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == str1[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_c_str_2) {
+	MyString s1 = "c_str method"_s;
+	char * str1 = s1.c_str();
+
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == str1[i]);
+	}
+}
+
+DECLARE_OOP_TEST(string_test_c_str_3) {
+	MyString s1 = "c_str method"_s;
+	char * str1 = new char [s1.length()+1];
+	char etalonString[13] = "c_str method";
+	
+	//strcpy_s(str1, strlen(str1), s1.c_str());
+	memcpy(str1, s1.c_str(), s1.length()+1);
+	s1.clear();
+
+	for (int i = 0; i < strlen(str1); i++) {
+		assert(str1[i] == etalonString[i]);
+	}
+	//delete[] str1;
+}
+
+DECLARE_OOP_TEST(string_test_c_str_4) {
+	MyString s1 = "c_str method c_str method c_str method c_str method "_s;
+	char * str1 = new char[s1.length() + 1];
+	MyString etalonString = "c_str method c_str method c_str method c_str method "_s;
+
+	strcpy_s(str1, strlen(str1), s1.c_str());
+	s1.clear();
+
+	for (int i = 0; i < strlen(str1); i++) {
+		assert(str1[i] == etalonString[i]);
+	}
+}
+
 
 
 
