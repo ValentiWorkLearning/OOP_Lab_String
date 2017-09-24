@@ -466,6 +466,20 @@ DECLARE_OOP_TEST(string_test_OperatorIndexAccessReadWrite_5) {
 	}
 }
 
+DECLARE_OOP_TEST(string_test_UserLiteral_s) {
+	"Test user literal"_s;
+	MyString s1("Test user literal");
+	
+	assert(s1.length() == "Test user literal"_s.length());
+	
+	MyString s2 = "Test literal"_s;
+	MyString s3{"Test literal"};
+	
+	for (int i = 0; i < s2.length(); i++) {
+		assert(s3[i] == s2[i]);
+	}
+}
+
 
 
 

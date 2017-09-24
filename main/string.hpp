@@ -69,6 +69,6 @@ public:
 	~MyString();
 };
 
-
+MyString operator "" _s(const char *_string, std::size_t _size);
 
 #endif

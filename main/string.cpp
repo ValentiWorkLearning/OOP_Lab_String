@@ -347,15 +347,12 @@ void MyString::reserve(long _N)
 
 char * MyString::begin()const 
 {
-
 	return m_DataStart;
 }
 
 char * MyString::end() 
 {
-
 	return m_DataStart+length();
-
 }
 
 
@@ -365,6 +362,15 @@ char * MyString::end()
 
 MyString::~MyString() 
 {
-//	std::cout << "Destructor";
 	if(IsMemAllocate())delete [] this->m_EndOfStorage;
+}
+
+/*!
+* Realization of global user literal _s for declare MyString using "Some String"_s
+*/
+
+MyString operator"" _s(const char * _string, std::size_t _size)
+{
+	return MyString( _string);
+
 }
