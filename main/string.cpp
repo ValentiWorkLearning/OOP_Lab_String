@@ -416,6 +416,51 @@ void MyString::insert(long pos, const char * data)
 		
 		}
 	}
+	else {
+		if (capacity() >= pos + strlen(data) + 1) {
+			if (this->empty()) {
+				for (long i = 0; i < pos; i++)m_StaticBuffer[i] = ' ';
+				memcpy(begin() + pos, data, strlen(data) + 1);
+			}
+			else {
+				memcpy(begin() + pos, data, strlen(data));
+			}
+		}
+		else {
+			/**<Init temponary variables * */
+			long currentLength = length();
+			long allocateBuffer;
+			char * tempString = new char[length() + 1];
+
+			if (capacity() < pos)allocateBuffer= length() + strlen(data) + 1;
+			else { allocateBuffer = pos + strlen(data) + 1; }
+			
+			/**<Copy source to temp string * */
+			memcpy(tempString, m_StaticBuffer, length() + 1);
+
+			/* Allocate new  memory* */
+			m_EndOfStorage = new char[allocateBuffer];
+			m_DataStart = m_EndOfStorage;
+			m_DataFinish = m_EndOfStorage + allocateBuffer;
+
+			/* Restore original string in new allocated buffer * */
+			memcpy(m_EndOfStorage, tempString, currentLength + 1);
+
+			/* Delete temponary buffer* */
+			delete[] tempString;
+
+			/* Fill spaces free area* */
+			for (long i = length(); i <= pos; i++) {
+				m_EndOfStorage[i] = ' ';
+			}
+
+			/* Copy data to position * */
+			if (this->empty()) {
+				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+			}
+			memcpy(begin() + pos, data, strlen(data) + 1);
+		}
+	}
 }
 
 void MyString::erase(long pos, long len)
