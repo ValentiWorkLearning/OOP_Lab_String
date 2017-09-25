@@ -579,6 +579,22 @@ DECLARE_OOP_TEST(string_test_Insert_Test_2) {
 	s1.insert(5, "TEST TEST");
 
 }
+DECLARE_OOP_TEST(string_test_Insert_Test_3) {
+	MyString s1{ "Some Test String" };
+	s1.insert(0, "Hello world");
+	try
+	{
+		s1.insert(-20, "TEST TEST");
+		assert(!"Exception must have been thrown");
+	}
+	catch (std::exception &e) {
+
+		assert(!strcmp(e.what(), "Out of range"));
+	}
+}
+
+
+
 
 
 
