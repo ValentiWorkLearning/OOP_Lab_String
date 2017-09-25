@@ -363,6 +363,7 @@ char * MyString::end()
 
 void MyString::insert(long pos, const char * data)
 {
+	if(pos<0)throw std::logic_error("Out of range");
 	if (IsMemAllocate()) {
 		if (capacity() >= pos + strlen(data) + 1) {
 
