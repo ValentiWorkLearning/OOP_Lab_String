@@ -87,33 +87,10 @@ MyString & MyString::operator = (const MyString & _string)
 	allocate new segment which have size oldCapacity*2 */
 	long currentCapacity = capacity();
 	if (this->IsMemAllocate()) {
-		
-		if (capacity() < _string.length()+1) {
-			
-			/**<Find memory factor for expand array memory multiples of two*/
-			long memoryFactor = FactorMemoryMultipleTwo(capacity(), _string.length());
-			delete[] m_EndOfStorage;
-
-			m_EndOfStorage = new char[currentCapacity *memoryFactor];
-			
-			memcpy(m_EndOfStorage, _string.m_DataStart, _string.length() + 1);
-			
-			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
-			m_DataStart = m_EndOfStorage;
-			
-			return *this;
-		}
-		else {
+	
 			delete[]m_EndOfStorage;
-
-			m_EndOfStorage = new char[currentCapacity];
-
-			memcpy(m_EndOfStorage, _string.m_DataStart, _string.length() + 1);
-
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage+currentCapacity;
+			ExpandMultipleTwoStringBuffer(capacity(), _string.length(), _string.m_DataStart);
 			return *this;
-		}
 	}
 	/**<If memory didn`t allocate. Check string length. If length< MAX_STATIC_SIZE - copy static array, else allocate new buffer,which
 	has size strlen(_string)+1* */
@@ -122,17 +99,14 @@ MyString & MyString::operator = (const MyString & _string)
 			strcpy_s(m_StaticBuffer, strlen(_string.m_StaticBuffer) + 1, _string.m_StaticBuffer);
 			m_DataStart = m_StaticBuffer;
 			m_DataFinish = m_DataStart+MAX_STATIC_SIZE;
+		
 		}
 		else {
 			/**<Classic copy data* */
-			m_EndOfStorage = new char[_string.length() + 1];
-			memcpy(m_EndOfStorage, _string.m_DataStart, _string.length() + 1);
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + strlen(m_EndOfStorage);
-		
+			ExpandMultipleTwoStringBuffer(capacity(), _string.length(), _string.m_DataStart);
 		}
 	}
-	
+	return *this;
 }
 
 MyString::MyString(MyString && _string)
@@ -170,26 +144,23 @@ MyString & MyString::operator += (MyString _string) {
 	
 	if (IsMemAllocate()) {
 		if ( capacity() >=  length()+_string.length()+1) {
-		strcat_s(m_EndOfStorage,capacity(), _string.m_EndOfStorage);
+			if (_string.IsMemAllocate()) {
+				strcat_s(m_EndOfStorage, capacity(), _string.m_EndOfStorage);
+			}
+			else {
+				strcat_s(m_EndOfStorage, capacity(), _string.m_StaticBuffer);
+			}
 		}
 		else {
 			/**<Init temponary variables * */
 			char * tempString = new char[length() + 1];
-			long currentCapacity = capacity();
-			long memoryFactor = FactorMemoryMultipleTwo(capacity(), length()+_string.length());
 			
 			/**<Copy source to temp string * */
 			memcpy(tempString, m_EndOfStorage, length() + 1);
 
-			/* Memory operations and allocation* */
-			/* Free old allocated memory and allocate new * */
+			/* Memory operations* */
 			delete[] m_EndOfStorage;
-			m_EndOfStorage = new char[currentCapacity *memoryFactor];
-			
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
+			ExpandMultipleTwoStringBuffer(capacity(), length() + _string.length(), tempString);
 
 			/* Concatenation strings* */
 			if (_string.IsMemAllocate()) {
@@ -212,20 +183,12 @@ MyString & MyString::operator += (MyString _string) {
 		}
 		else {
 			/**<Init temponary variables * */
-			long currentLength = length();
-			long allocateBuffer = length() + _string.length() + 1;
 			char * tempString = new char[length() + 1];
 			
 			/**<Copy source to temp string * */
 			memcpy(tempString, m_StaticBuffer, length() + 1);
 
-			/* Allocate new  memory* */
-			m_EndOfStorage = new char[allocateBuffer];
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + allocateBuffer;
-			
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString,currentLength+1);
+			ExpandMultipleTwoStringBuffer(capacity(), length() + _string.length() + 1, tempString);
 			
 			/* Concatenation strings* */
 			if (_string.IsMemAllocate()) {
@@ -275,16 +238,20 @@ bool MyString::IsMemAllocate()const
 	return false;
 }
 
-long MyString::FactorMemoryMultipleTwo(long _capacity, long _strLength)
+void MyString::ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy)
 {
-	/* System method. Calculate a value which need to allocate new buffer which have size multiple two * */
 	long memFactor = 1;
-	while (_capacity <= _strLength+1)
+	while (_capacity <= _strLength + 1)
 	{
 		memFactor *= 2;
 		_capacity *= memFactor;
 	}
-	return memFactor;
+
+	m_EndOfStorage = new char[_capacity *memFactor];
+
+	memcpy(m_EndOfStorage, _stringToCopy, _strLength + 1);
+	m_DataStart = m_EndOfStorage;
+	m_DataFinish = m_EndOfStorage + _capacity * memFactor;
 }
 
 /*!
@@ -364,7 +331,9 @@ char * MyString::end()
 void MyString::insert(long pos, const char * data)
 {
 	if(pos<0)throw std::logic_error("Out of range");
+
 	if (IsMemAllocate()) {
+
 		if (capacity() >= pos + strlen(data) + 1) {
 
 			if (this->empty()) {
@@ -378,31 +347,14 @@ void MyString::insert(long pos, const char * data)
 		else {
 			/**<Init temponary variables * */
 			char * tempString = new char[length() + 1];
-			long currentCapacity = capacity();
-			long memoryFactor;
-
-			if (capacity() < pos) {
-				 memoryFactor= FactorMemoryMultipleTwo(capacity(), length() + strlen(data) + 1);
-			}
-
-			else
-			{
-				memoryFactor = FactorMemoryMultipleTwo(capacity(), pos +strlen(data)+1);
-			}
-
+			
 			/**<Copy source to temp string * */
 			memcpy(tempString, m_EndOfStorage, length() + 1);
 
-			/* Memory operations and allocation* */
-			/* Free old allocated memory and allocate new * */
+			/* Memory operations* */
 			delete[] m_EndOfStorage;
-			m_EndOfStorage = new char[currentCapacity *memoryFactor];
 
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + currentCapacity * memoryFactor;
-
+			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
 			/* Fill spaces free area* */
 			for (long i = length(); i <= pos; i++) {
 				m_EndOfStorage[i] = ' ';
@@ -413,7 +365,7 @@ void MyString::insert(long pos, const char * data)
 				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
 			}
 			memcpy(begin() + pos, data, strlen(data)+1);
-		
+			delete[] tempString;
 		}
 	}
 	else {
@@ -427,25 +379,14 @@ void MyString::insert(long pos, const char * data)
 			}
 		}
 		else {
-			/**<Init temponary variables * */
-			long currentLength = length();
-			long allocateBuffer;
+			/**<Init temponary variables * */			
 			char * tempString = new char[length() + 1];
 
-			if (capacity() < pos)allocateBuffer= length() + strlen(data) + 1;
-			else { allocateBuffer = pos + strlen(data) + 1; }
-			
 			/**<Copy source to temp string * */
 			memcpy(tempString, m_StaticBuffer, length() + 1);
 
-			/* Allocate new  memory* */
-			m_EndOfStorage = new char[allocateBuffer];
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + allocateBuffer;
-
-			/* Restore original string in new allocated buffer * */
-			memcpy(m_EndOfStorage, tempString, currentLength + 1);
-
+			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
+			
 			/* Delete temponary buffer* */
 			delete[] tempString;
 
@@ -465,6 +406,7 @@ void MyString::insert(long pos, const char * data)
 
 void MyString::erase(long pos, long len)
 {
+
 }
 
 /*!

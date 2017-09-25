@@ -19,7 +19,8 @@ private:
 	char* m_DataStart;
 	char* m_DataFinish;
 	bool IsMemAllocate()const;
-	long FactorMemoryMultipleTwo(long _capacity, long _strLength);
+
+	void ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy);
 public:
 	
 	explicit MyString( );
