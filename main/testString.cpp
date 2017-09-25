@@ -72,7 +72,9 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_1) {
 	MyString s1{ "Hello World123123123" };
 	MyString s2{ 50 };
 	s2 = s1;
-
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == s2[i]);
+	}
 	assert(s1.length() == s2.length());
 	int i = s2.capacity();
 	assert(s2.capacity() == 50);
@@ -82,6 +84,9 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_2) {
 	MyString s1 {"Hello World123123123"};
 	MyString s2{ 13 };
 	s2 = s1;
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == s2[i]);
+	}
 	assert(s1.length() == s2.length());
 	assert( s2.capacity() >= s1.length() );
 }
@@ -90,6 +95,19 @@ DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_3) {
 	MyString s1{ "Hello World" };
 	MyString s2;
 	s2 = s1;
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == s2[i]);
+	}
+	assert(s1.length() == s2.length());
+}
+
+DECLARE_OOP_TEST(string_test_CapacityTest__Test_Copy_Constructor_4) {
+	MyString s1{ "Hello Worldello World123123123" };
+	MyString s2;
+	s2 = s1;
+	for (int i = 0; i < s1.length(); i++) {
+		assert(s1[i] == s2[i]);
+	}
 	assert(s1.length() == s2.length());
 }
 
@@ -627,6 +645,20 @@ DECLARE_OOP_TEST(string_test_Insert_Test_6) {
 		assert(s1[i] == etalonString[i]);
 	}
 }
+
+DECLARE_OOP_TEST(string_test_Insert_Test_7) {
+	MyString s1;
+	s1.insert(1, " G");
+	s1.insert(1, " Hello TEST TEST TEST TEST");
+
+	MyString etalonString = "  Hello TEST TEST TEST TEST"_s;
+
+	for (int i = 0; i < etalonString.length(); i++) {
+		assert(s1[i] == etalonString[i]);
+	}
+}
+
+
 
 
 
