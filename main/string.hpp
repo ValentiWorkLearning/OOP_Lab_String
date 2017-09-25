@@ -21,6 +21,7 @@ private:
 	bool IsMemAllocate()const;
 
 	void ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy);
+	long FactorMemoryMultipleTwo(long _capacity, long _strLength);
 public:
 	
 	explicit MyString( );

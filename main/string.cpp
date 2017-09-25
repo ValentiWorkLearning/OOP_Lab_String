@@ -238,20 +238,31 @@ bool MyString::IsMemAllocate()const
 	return false;
 }
 
-void MyString::ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy)
+long MyString::FactorMemoryMultipleTwo(long _capacity, long _strLength)
 {
+	/* System method. Calculate a value which need to allocate new buffer which have size multiple two * */
 	long memFactor = 1;
-	while (_capacity <= _strLength + 1)
+	while (_capacity <= _strLength+1)
 	{
 		memFactor *= 2;
 		_capacity *= memFactor;
 	}
+	return memFactor;
+}
 
-	m_EndOfStorage = new char[_capacity *memFactor];
+void MyString::ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy)
+{
+	long tempCapacity = _capacity;
+	while (tempCapacity <= _strLength + 1)
+	{
+		tempCapacity *=2;
+	}
+
+	m_EndOfStorage = new char[tempCapacity];
 
 	memcpy(m_EndOfStorage, _stringToCopy, _strLength + 1);
 	m_DataStart = m_EndOfStorage;
-	m_DataFinish = m_EndOfStorage + _capacity * memFactor;
+	m_DataFinish = m_EndOfStorage + tempCapacity;
 }
 
 /*!
@@ -327,81 +338,116 @@ char * MyString::end()
 {
 	return m_DataStart+length();
 }
-
-void MyString::insert(long pos, const char * data)
-{
-	if(pos<0)throw std::logic_error("Out of range");
-
+//
+//void MyString::insert(long pos, const char * data)
+//{
+//	if(pos<0)throw std::logic_error("Out of range");
+//
+//	if (IsMemAllocate()) {
+//
+//		if (capacity() >= pos + strlen(data) + 1) {
+//
+//			if (this->empty()) {
+//				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+//				memcpy(begin() + pos, data, strlen(data) + 1);
+//			}
+//			else {
+//				for (long i = length(); i <= pos; i++) {
+//					m_EndOfStorage[i] = ' ';
+//				}
+//				//long currentLength = length();
+//				memcpy(begin() + pos, data, strlen(data)+1);
+//				//this->m_EndOfStorage[currentLength + strlen(data)] = '\0';
+//			}
+//		}
+//		else {
+//			/**<Init temponary variables * */
+//			char * tempString = new char[length() + 1];
+//			
+//			/**<Copy source to temp string * */
+//			memcpy(tempString, m_EndOfStorage, length() + 1);
+//
+//			/* Memory operations* */
+//			delete[] m_EndOfStorage;
+//
+//			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
+//			/* Fill spaces free area* */
+//			for (long i = length(); i <= pos; i++) {
+//				m_EndOfStorage[i] = ' ';
+//			}
+//
+//			/* Copy data to position * */
+//			if (this->empty()) { 
+//				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+//			}
+//			memcpy(begin() + pos, data, strlen(data)+1);
+//			delete[] tempString;
+//		}
+//	}
+//	else {
+//		if (capacity() >= pos + strlen(data) + 1) {
+//			if (this->empty()) {
+//				for (long i = 0; i < pos; i++)m_StaticBuffer[i] = ' ';
+//				memcpy(begin() + pos, data, strlen(data) + 1);
+//			}
+//			else {
+//				memcpy(begin() + pos, data, strlen(data));
+//			}
+//		}
+//		else {
+//			/**<Init temponary variables * */			
+//			char * tempString = new char[length() + 1];
+//
+//			/**<Copy source to temp string * */
+//			memcpy(tempString, m_StaticBuffer, length() + 1);
+//			long memFactor = FactorMemoryMultipleTwo(capacity(), pos + strlen(data) + 1);
+//			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
+//			
+//			/* Delete temponary buffer* */
+//			delete[] tempString;
+//
+//			/* Fill spaces free area* */
+//			for (long i = length(); i <= pos; i++) {
+//				m_EndOfStorage[i] = ' ';
+//			}
+//
+//			/* Copy data to position * */
+//			if (this->empty()) {
+//				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+//			}
+//			memcpy(begin() + pos, data, strlen(data) + 1);
+//		}
+//	}
+//}
+void MyString::insert(long pos, const char * data) {
+	if (pos<0)throw std::logic_error("Out of range");
+	
 	if (IsMemAllocate()) {
-
-		if (capacity() >= pos + strlen(data) + 1) {
-
-			if (this->empty()) {
-				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
-				memcpy(begin() + pos, data, strlen(data) + 1);
+		
+		if(capacity() > pos+strlen(data)+length()){
+	
+			if (pos > length()) {
+				if (empty()) {
+					for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
+					memcpy(begin() + pos, data, strlen(data) + 1);
+				}
+				else {
+					for (long i = length(); i <= pos; i++) {
+						m_EndOfStorage[i] = ' ';
+					}
+					memcpy(begin() + pos, data, strlen(data) + 1);
+				}
 			}
-			else {
-				memcpy(begin() + pos, data, strlen(data) );
+			else { 
+				char * tempString = new char[length() - pos];
+				memcpy(tempString, begin() + length() - pos + 1, strlen(begin() + length() - pos +1));
+				memcpy(begin()+pos,data,strlen(data));
+				memcpy(begin() + pos + strlen(data), tempString, strlen(tempString));
 			}
-		}
-		else {
-			/**<Init temponary variables * */
-			char * tempString = new char[length() + 1];
-			
-			/**<Copy source to temp string * */
-			memcpy(tempString, m_EndOfStorage, length() + 1);
-
-			/* Memory operations* */
-			delete[] m_EndOfStorage;
-
-			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
-			/* Fill spaces free area* */
-			for (long i = length(); i <= pos; i++) {
-				m_EndOfStorage[i] = ' ';
-			}
-
-			/* Copy data to position * */
-			if (this->empty()) { 
-				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
-			}
-			memcpy(begin() + pos, data, strlen(data)+1);
-			delete[] tempString;
 		}
 	}
-	else {
-		if (capacity() >= pos + strlen(data) + 1) {
-			if (this->empty()) {
-				for (long i = 0; i < pos; i++)m_StaticBuffer[i] = ' ';
-				memcpy(begin() + pos, data, strlen(data) + 1);
-			}
-			else {
-				memcpy(begin() + pos, data, strlen(data));
-			}
-		}
-		else {
-			/**<Init temponary variables * */			
-			char * tempString = new char[length() + 1];
 
-			/**<Copy source to temp string * */
-			memcpy(tempString, m_StaticBuffer, length() + 1);
 
-			ExpandMultipleTwoStringBuffer(capacity(), pos + strlen(data) + 1, tempString);
-			
-			/* Delete temponary buffer* */
-			delete[] tempString;
-
-			/* Fill spaces free area* */
-			for (long i = length(); i <= pos; i++) {
-				m_EndOfStorage[i] = ' ';
-			}
-
-			/* Copy data to position * */
-			if (this->empty()) {
-				for (long i = 0; i < pos; i++)m_EndOfStorage[i] = ' ';
-			}
-			memcpy(begin() + pos, data, strlen(data) + 1);
-		}
-	}
 }
 
 void MyString::erase(long pos, long len)

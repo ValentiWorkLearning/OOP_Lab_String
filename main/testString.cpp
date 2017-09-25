@@ -587,76 +587,16 @@ DECLARE_OOP_TEST(string_test_c_str_4) {
 DECLARE_OOP_TEST(string_test_Insert_Test_1) {
 	MyString s1{22};
 	MyString etalonString{""};
-	s1.insert(20, "Hello world");
-
+	s1.insert(7, "Hello world");
 }
 
 DECLARE_OOP_TEST(string_test_Insert_Test_2) {
-	MyString s1{ "Some Test String" };
-	s1.insert(20, "Hello world");
-
-	s1.insert(5, "TEST TEST");
-
-}
-DECLARE_OOP_TEST(string_test_Insert_Test_3) {
-	MyString s1{ "Some Test String" };
-	s1.insert(5, "Hello world");
-	s1.insert(17, "Hello world");
-	try
-	{
-		s1.insert(-20, "TEST TEST");
-		assert(!"Exception must have been thrown");
-	}
-	catch (std::exception &e) {
-
-		assert(!strcmp(e.what(), "Out of range"));
-	}
+	MyString s1{ 40 };
+	s1+= "Some test string"_s;
+	MyString etalonString{ "" };
+	s1.insert(18, "Hello");
 }
 
-DECLARE_OOP_TEST(string_test_Insert_Test_4) {
-	MyString s1{ "Hello" };
-	s1.insert(5, "Hello");
-	s1.insert(10, "Hello");
-	MyString etalonString = "HelloHelloHello"_s;
-	for (int i = 0; i < etalonString.length(); i ++ ) {
-		assert(s1[i] == etalonString[i]);
-	}
-}
-
-DECLARE_OOP_TEST(string_test_Insert_Test_5) {
-	MyString s1{ "Hello " };
-	s1.insert(5, "Hello ");
-	s1.insert(10, " Hello TEST TEST TEST TEST");
-	MyString etalonString = "HelloHello Hello TEST TEST TEST TEST"_s;
-	for (int i = 0; i < etalonString.length(); i++) {
-		assert(s1[i] == etalonString[i]);
-	}
-
-}
-
-DECLARE_OOP_TEST(string_test_Insert_Test_6) {
-	MyString s1;
-	s1.insert(2, " G");
-	s1.insert(10, " Hello TEST TEST TEST TEST");
-
-	MyString etalonString = "   G       Hello TEST TEST TEST TEST"_s;
-
-	for (int i = 0; i < etalonString.length(); i++) {
-		assert(s1[i] == etalonString[i]);
-	}
-}
-
-DECLARE_OOP_TEST(string_test_Insert_Test_7) {
-	MyString s1;
-	s1.insert(1, " G");
-	s1.insert(1, " Hello TEST TEST TEST TEST");
-
-	MyString etalonString = "  Hello TEST TEST TEST TEST"_s;
-
-	for (int i = 0; i < etalonString.length(); i++) {
-		assert(s1[i] == etalonString[i]);
-	}
-}
 
 
 
