@@ -294,6 +294,9 @@ bool MyString::empty()
 	return false;
 }
 
+/*!
+* Realization reserve  method which reservate _N characters 
+*/
 void MyString::reserve(long _N)
 {
 	/**<Copy this->string data and allocate new memory. If buffer is used - allocate memory in m_EndOfData.* */
@@ -317,16 +320,25 @@ void MyString::reserve(long _N)
 	delete[] tempString;
 }
 
+/*!
+* Realization begin method which return pointer to begin of string
+*/
 char * MyString::begin()const 
 {
 	return m_DataStart;
 }
 
+/*!
+* Realization end method which return pointer to end of string
+*/
 char * MyString::end() 
 {
 	return m_DataStart+length();
 }
 
+/*!
+* Realization erase method which insert segment to string in position
+*/
 void MyString::insert(long pos, const char * data) {
 	if (pos<0)throw std::logic_error("Out of range");
 	
@@ -404,9 +416,65 @@ void MyString::insert(long pos, const char * data) {
 	}
 }
 
+/*!
+* Realization erase method which erase segment in string which have size position + length
+*/
 void MyString::erase(long pos, long len)
 {
+	if(pos+len>length()||pos<0||len<0)throw std::logic_error("Out of range");
 
+	if (IsMemAllocate()) {
+		char* tempString = new char[length()+1 - len];
+		memcpy(tempString, begin() + pos + len, length() + 1 - len);
+		
+		for (long i = pos; i < len; i++) {
+			begin()[pos + i] = ' ';
+		}
+		
+		memcpy(m_EndOfStorage + pos, tempString, strlen(tempString) + 1);
+		delete[] tempString;
+	}
+	else {
+		char* tempString = new char[length() + 1 - len];
+		memcpy(tempString, begin() + pos + len, length() + 1 - len);
+		for (long i = pos; i < len; i++) {
+			begin()[pos + i] = ' ';
+		}
+		memcpy(m_StaticBuffer + pos, tempString, strlen(tempString) + 1);
+		delete[] tempString;
+	
+	}
+}
+
+/*!
+* Realization substring method which return copy of original string from position to length
+*/
+MyString MyString::substring(long pos, long len)
+{
+	if ((len == -1)&&(pos>0)) {
+		char*tempString = new char[length()-pos+1];
+		
+		memcpy(tempString, begin() + pos, length() - pos + 1);
+
+		MyString returnString{ tempString };
+
+		delete[] tempString;
+
+		return  returnString;
+	}
+
+	if (pos + len>length() || pos<0 || len<0)throw std::logic_error("Out of range");
+		
+	char*tempString = new char[pos + len+1];
+	
+	for (int i = 0; i < pos + len + 1; i++) {
+		tempString[i] = '\0';
+	}
+	memcpy(tempString, begin() + pos, len+1);
+	
+	MyString returnString{ tempString };
+	delete[] tempString;
+	return  returnString;
 }
 
 /*!
