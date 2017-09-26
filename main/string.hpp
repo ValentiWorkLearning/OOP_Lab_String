@@ -1,3 +1,4 @@
+// Valentyn Korniienko, KNURE, 2 cource , Kharkiv, Ukraine
 #ifndef STRING_H
 #define STRING_H
 
@@ -21,7 +22,6 @@ private:
 	bool IsMemAllocate()const;
 
 	void ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy);
-	long FactorMemoryMultipleTwo(long _capacity, long _strLength);
 public:
 	
 	explicit MyString( );
@@ -66,7 +66,7 @@ public:
 
 	void   erase(long pos, long len);
 
-	MyString * substring(long pos, long len);
+	MyString substring(long pos, long len);
 	
 	~MyString();
 };
