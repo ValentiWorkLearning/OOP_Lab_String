@@ -633,7 +633,7 @@ DECLARE_OOP_TEST(string_test_Erase_Test_1) {
 	MyString s1{};
 	s1.insert(41, "Hello");
 	s1.insert(0, "HELLO");
-	s1.insert(6, "WTF, IT`S WORK?");
+	s1.insert(6, " IT`S WORK?");
 	s1.erase(20, 20);
 	s1.erase(0, 40);
 }
@@ -669,6 +669,7 @@ DECLARE_OOP_TEST(string_test_Substring_Test_1) {
 	s1.insert(4, "HELLO");
 
 	MyString s2 = s1.substring(4, 3);
+
 }
 
 DECLARE_OOP_TEST(string_test_Substring_Test_2) {
