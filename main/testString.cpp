@@ -599,20 +599,20 @@ DECLARE_OOP_TEST(string_test_Insert_Test_2) {
 
 DECLARE_OOP_TEST(string_test_Insert_Test_3) {
 	MyString s1{ 20 };
-	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	MyString etalonString{ "HELLO  IT`S WORK?                                        Hello" };
 	s1.insert(41, "Hello");
 	s1.insert(0, "HELLO");
-	s1.insert(6, "WTF, IT`S WORK?");
+	s1.insert(6, " IT`S WORK?");
 	for (int i = 0; i <s1.length(); i++) {
 		assert(s1[i] == etalonString[i]);
 	}
 }
 DECLARE_OOP_TEST(string_test_Insert_Test_4) {
 	MyString s1{};
-	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	MyString etalonString{ "HELLO  IT`S WORK?                                        Hello" };
 	s1.insert(41, "Hello");
 	s1.insert(0, "HELLO");
-	s1.insert(6, "WTF, IT`S WORK?");
+	s1.insert(6, " IT`S WORK?");
 	for (int i = 0; i <s1.length(); i++) {
 		assert(s1[i] == etalonString[i]);
 	}
@@ -620,19 +620,74 @@ DECLARE_OOP_TEST(string_test_Insert_Test_4) {
 
 DECLARE_OOP_TEST(string_test_Insert_Test_5) {
 	MyString s1{};
-	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	MyString etalonString{ "HELLO  IT`S WORK?                                        Hello" };
 	s1.insert(41, "Hello");
 	s1.insert(0, "HELLO");
-	s1.insert(6, "WTF, IT`S WORK?");
+	s1.insert(6, " IT`S WORK?");
 	for (int i = 0; i <s1.length(); i++) {
 		assert(s1[i] == etalonString[i]);
 	}
 }
 
+DECLARE_OOP_TEST(string_test_Erase_Test_1) {
+	MyString s1{};
+	s1.insert(41, "Hello");
+	s1.insert(0, "HELLO");
+	s1.insert(6, "WTF, IT`S WORK?");
+	s1.erase(20, 20);
+	s1.erase(0, 40);
+}
 
+DECLARE_OOP_TEST(string_test_Erase_Test2) {
+	MyString s1{};
+	s1.insert(0, "HELLO");
+	try
+	{
+		s1.erase(20,2);
+		assert(!"Exception must have been thrown");
+	}
+	catch (std::logic_error &e) {
 
+		assert(!strcmp(e.what(), "Out of range"));
+	}
+	s1.erase(0, 3);
 
+}
 
+DECLARE_OOP_TEST(string_test_Erase_Test3) {
+	MyString s1{};
+	s1.insert(4, "HELLO");
+	
+	s1.insert(8, "HELLO");
+
+	s1.erase(0, 3);
+	s1.erase(5, 4);
+}
+
+DECLARE_OOP_TEST(string_test_Substring_Test_1) {
+	MyString s1{};
+	s1.insert(4, "HELLO");
+
+	MyString s2 = s1.substring(4, 3);
+}
+
+DECLARE_OOP_TEST(string_test_Substring_Test_2) {
+	MyString s1{49};
+	s1.insert(4, "HELLO");
+	s1.insert(20, "Out of range");
+	MyString s2 = s1.substring(4, 3);
+	MyString s3 = s1.substring(20, 12);
+}
+
+DECLARE_OOP_TEST(string_test_Substring_Test_3) {
+	MyString s1{ 49 };
+	s1.insert(4, "HELLO");
+	s1.insert(20, "Out of range");
+
+	MyString s2 = s1.substring(4, 3);
+	MyString s3 = s1.substring(1, -1);
+	s3 += s1;
+}
 
 
 
