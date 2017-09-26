@@ -591,10 +591,42 @@ DECLARE_OOP_TEST(string_test_Insert_Test_1) {
 }
 
 DECLARE_OOP_TEST(string_test_Insert_Test_2) {
-	MyString s1{ 40 };
+	MyString s1{ 20 };
 	s1+= "Some test string"_s;
 	MyString etalonString{ "" };
-	s1.insert(18, "Hello");
+	s1.insert(41, "Hello");
+}
+
+DECLARE_OOP_TEST(string_test_Insert_Test_3) {
+	MyString s1{ 20 };
+	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	s1.insert(41, "Hello");
+	s1.insert(0, "HELLO");
+	s1.insert(6, "WTF, IT`S WORK?");
+	for (int i = 0; i <s1.length(); i++) {
+		assert(s1[i] == etalonString[i]);
+	}
+}
+DECLARE_OOP_TEST(string_test_Insert_Test_4) {
+	MyString s1{};
+	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	s1.insert(41, "Hello");
+	s1.insert(0, "HELLO");
+	s1.insert(6, "WTF, IT`S WORK?");
+	for (int i = 0; i <s1.length(); i++) {
+		assert(s1[i] == etalonString[i]);
+	}
+} 
+
+DECLARE_OOP_TEST(string_test_Insert_Test_5) {
+	MyString s1{};
+	MyString etalonString{ "HELLO WTF, IT`S WORK?                                        Hello" };
+	s1.insert(41, "Hello");
+	s1.insert(0, "HELLO");
+	s1.insert(6, "WTF, IT`S WORK?");
+	for (int i = 0; i <s1.length(); i++) {
+		assert(s1[i] == etalonString[i]);
+	}
 }
 
 
