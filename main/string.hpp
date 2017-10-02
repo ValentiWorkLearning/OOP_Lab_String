@@ -19,17 +19,18 @@ private:
 
 	char* m_DataStart;
 	char* m_DataFinish;
-	bool IsMemAllocate()const;
+	bool IsMemAllocate();
 
-	void ExpandMultipleTwoStringBuffer(long _capacity, long _strLength, char * _stringToCopy);
+	void ExpandMultipleTwoStringBuffer( long _strLength, char * _stringToCopy);
+	void RequestMemoryOfString(long _strlen, bool _allocateNewMemory = false);
+    char * GetCurentMemoryBuffer()const;
 public:
 	
-	explicit MyString( );
+	MyString( );
 	
-	explicit MyString( const char * _string);
+	MyString( const char * _string);
 
-	explicit MyString( long _N );
-	//MyString( int N );
+    MyString( long _N );
 
 	//Operators
 
@@ -72,5 +73,28 @@ public:
 };
 
 MyString operator "" _s(const char *_string, std::size_t _size);
+
+
+inline bool MyString::MyString::empty()
+{
+	if (length() == 0)return true;
+	return false;
+}
+
+/*!
+* Realization begin method which return pointer to begin of string
+*/
+inline char * MyString::MyString::begin()const
+{
+	return m_DataStart;
+}
+
+/*!
+* Realization end method which return pointer to end of string
+*/
+inline  char * MyString::MyString::end()
+{
+	return m_DataStart + length();
+}
 
 #endif
