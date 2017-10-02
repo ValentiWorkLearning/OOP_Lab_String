@@ -75,26 +75,63 @@ public:
 MyString operator "" _s(const char *_string, std::size_t _size);
 
 
+/*!
+* Return true if string is empty 
+*/
 inline bool MyString::MyString::empty()
 {
-	if (length() == 0)return true;
+	if(length() == 0)return true;
 	return false;
+
 }
 
 /*!
-* Realization begin method which return pointer to begin of string
+* Return pointer to begin of string
 */
-inline char * MyString::MyString::begin()const
+inline char * MyString::begin()const
 {
 	return m_DataStart;
 }
 
 /*!
-* Realization end method which return pointer to end of string
+* Return pointer to end of string
 */
-inline  char * MyString::MyString::end()
+inline  char * MyString::end()
 {
 	return m_DataStart + length();
 }
 
+/*!
+* Return char* pointer to strnig
+*/
+inline char * MyString::c_str()
+{
+	return GetCurentMemoryBuffer();
+}
+
+/*!
+* Return string capacity
+*/
+inline long MyString::capacity()const
+{
+	long stringCapacity = m_DataFinish - m_DataStart;
+	return stringCapacity;
+}
+
+/*!
+* Return string length
+*/
+inline long MyString::length() const
+{
+	return strlen(GetCurentMemoryBuffer());
+}
+
+/*!
+* Return true if memory for string allocated
+*/
+inline bool MyString::IsMemAllocate()
+{
+	if (m_DataStart != m_StaticBuffer) { return true; }
+	return false;
+}
 #endif

@@ -121,15 +121,6 @@ char & MyString::operator[](long _index)
 }
 
 /*!
-* Return true if memory for string allocated 
-*/
-bool MyString::IsMemAllocate()
-{
-	if (m_DataStart != m_StaticBuffer) { return true; }
-	return false;
-}
-
-/*!
 * Expand string buffer multiple 2
 */
 void MyString::ExpandMultipleTwoStringBuffer(long _strLength,char* _stringToCopy)
@@ -180,31 +171,6 @@ void MyString::RequestMemoryOfString(long _strlen, bool _allocateNewMemory )
 }
 
 /*!
-* Return string length
-*/
-long MyString::length() const 
-{	
-	return strlen(GetCurentMemoryBuffer());
-}
-
-/*!
-* Return string capacity
-*/
-long MyString::capacity()const
-{
-	long stringCapacity = m_DataFinish - m_DataStart;
-	return stringCapacity;
-}
-
-/*!
-* Return char* pointer to strnig
-*/
-char * MyString::c_str()
-{
-	return GetCurentMemoryBuffer();
-}
-
-/*!
 * Clear string
 */
 void MyString::clear()
@@ -214,7 +180,7 @@ void MyString::clear()
 	}
 	else {
 		for (long i = 0; i < MAX_STATIC_SIZE; i++) {
-			m_StaticBuffer[i] = 0;
+			m_StaticBuffer[i] = NULL;
 		}
 	}
 	m_DataStart = m_StaticBuffer;
@@ -226,24 +192,15 @@ void MyString::clear()
 */
 void MyString::reserve(long _N)
 {
-	/**<Copy this->string data and allocate new memory. If buffer is used - allocate memory in m_EndOfData.* */
+	char * tempString = new char[length() + 1];
+	
+	memcpy(tempString, GetCurentMemoryBuffer(), length()+1);
+	
+	if (IsMemAllocate()) delete m_EndOfStorage;
 
-	char * tempString = new char[ length()+1 ];
-	long currentCapacity = capacity();
-
-	if (IsMemAllocate()) { 
-		memcpy(tempString, m_EndOfStorage, length() + 1);
-		delete[] m_EndOfStorage;
-	}
-	else {
-		memcpy(tempString, m_StaticBuffer, length() + 1);
-	}
-
-	m_EndOfStorage = new char[currentCapacity + _N];
-	memcpy(m_EndOfStorage, tempString, strlen(tempString) + 1);
-	m_DataStart = m_EndOfStorage;
-	m_DataFinish = m_DataStart + currentCapacity + _N;
-
+	RequestMemoryOfString(_N+capacity()-1, true);
+	memcpy(GetCurentMemoryBuffer(), tempString, strlen(tempString) + 1);
+	
 	delete[] tempString;
 }
 
@@ -288,7 +245,7 @@ void MyString::erase(long pos, long len)
 */
 MyString MyString::substring(long pos, long len)
 {
-	if ((len == -1)&&(pos>0)) {
+	if ((len == -1)&&(pos>=0)) {
 		char*tempString = new char[length()-pos+1];
 		
 		memcpy(tempString, begin() + pos, length() - pos + 1);
@@ -305,9 +262,9 @@ MyString MyString::substring(long pos, long len)
 	char*tempString = new char[pos + len+1];
 	
 	for (int i = 0; i < pos + len + 1; i++) {
-		tempString[i] = '\0';
+		tempString[i] = NULL;
 	}
-	memcpy(tempString, GetCurentMemoryBuffer() + pos, len+1);
+	memcpy(tempString, GetCurentMemoryBuffer() + pos, len);
 	
 	MyString returnString{ tempString };
 	delete[] tempString;
