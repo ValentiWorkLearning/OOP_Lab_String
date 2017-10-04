@@ -20,7 +20,7 @@ DECLARE_OOP_TEST(string_test_create_string_4) {
 
 DECLARE_OOP_TEST(string_test_create_string_5) {
 	MyString s1{ "Hello World Hello World" };
-	assert(s1.capacity() == 23);
+	assert(s1.capacity() == 31);
 	assert(!strcmp(s1.c_str(), "Hello World Hello World"));
 }
 
@@ -42,7 +42,7 @@ DECLARE_OOP_TEST(string_test_copy_constructor_1) {
 	MyString s2{ 50 };
 	s2 = s1;
 	assert(!strcmp(s1.c_str(), s2.c_str()));
-	assert(s2.capacity() == 50);
+	assert(s2.capacity() == 63);
 }
 
 DECLARE_OOP_TEST(string_test_copy_constructor_2) {
@@ -50,7 +50,7 @@ DECLARE_OOP_TEST(string_test_copy_constructor_2) {
 	MyString s2{ 50 };
 	s2 = s1;
 	assert(!strcmp(s1.c_str(), s2.c_str()));
-	assert(s2.capacity() == 50);
+	assert(s2.capacity() == 63);
 };
 
 DECLARE_OOP_TEST(string_test_copy_constructor_3) {
@@ -70,16 +70,24 @@ DECLARE_OOP_TEST(string_test_copy_constructor_4) {
 DECLARE_OOP_TEST(string_test_reserve_test_1) {
 	MyString s1;
 	s1.reserve(100);
-	assert(s1.capacity() == 115);
+	assert(s1.capacity() == 127);
 	assert(s1.empty());
 }
 
 DECLARE_OOP_TEST(string_test_reserve_test_2) {
 	MyString s1{ "Hello World" };
 	s1.reserve(100);
-	assert(s1.capacity() == 115);
+	assert(s1.capacity() == 127);
 	assert(!strcmp(s1.c_str(), "Hello World"));
 }
+
+DECLARE_OOP_TEST(string_test_reserve_test_3) {
+	MyString s1{ "Hello World" };
+	s1.reserve(2);
+	assert(s1.capacity() == 15);
+	assert(!strcmp(s1.c_str(), "Hello World"));
+}
+
 
 DECLARE_OOP_TEST(string_test_concatenation_test_1) {
 	MyString s1{ "Hello World" };
@@ -151,6 +159,12 @@ DECLARE_OOP_TEST(string_test_insert_test_4) {
 	assert(!strcmp(s1.c_str(), "HelloHello"));
 }
 
+DECLARE_OOP_TEST(string_test_insert_test_5) {
+	MyString s1{ "Hello" };
+	s1.insert(0, " ");
+	assert(!strcmp(s1.c_str(), " Hello"));
+}
+
 DECLARE_OOP_TEST(string_test_erase_test_1) {
 	MyString s1{ "Hello World" };
 	s1.erase(3, 5);
@@ -168,6 +182,12 @@ DECLARE_OOP_TEST(string_test_erase_test_2) {
 
 		assert(!strcmp(e.what(), "Out of range"));
 	}
+}
+
+DECLARE_OOP_TEST(string_test_erase_test_4) {
+	MyString s1{ "Hello World Hello World" };
+	s1.erase(3, 5);
+	assert(!strcmp(s1.c_str(), "Helrld Hello World"));
 }
 
 DECLARE_OOP_TEST(string_test_substring_1) {
@@ -217,19 +237,18 @@ DECLARE_OOP_TEST(string_test_operator_index_acess_read_write_2) {
 		assert(!strcmp(e.what(), "Out of range"));
 	}
 }
-
 DECLARE_OOP_TEST(string_test_operator_index_acess_read_write_3) {
-	MyString s1{ "Hello World" };
-	try
-	{
-		if (s1[25] == 'F');
-		assert(!"Exception must have been thrown");
-	}
-	catch (std::logic_error &e) {
+	MyString s1{ "TEST ACCESS TO" };
+	char * testChar = "TEST ACCESS TO";
 
-		assert(!strcmp(e.what(), "Out of range"));
+	for (long i = 0L; i < s1.length(); i++) {
+		s1[i] = 'A';
+	}
+	for (long i = 0L; i < s1.length(); i++) {
+		assert(s1[i] == 'A');
 	}
 }
+
 
 DECLARE_OOP_TEST(string_test_clear) {
 	MyString s1{ "Hello World" };
@@ -237,7 +256,42 @@ DECLARE_OOP_TEST(string_test_clear) {
 	assert(s1.empty());
 }
 
-DECLARE_OOP_TEST(string_test_move_assigment_operator) {
+DECLARE_OOP_TEST(string_test_move_assigment_operator1) {
 	MyString s1 = MyString{ "Helloworld" };
 
+	MyString s2{ "sdfsdf" };
+
+	s1 = std::move(s2);
+
+	assert(!strcmp(s1.c_str(), "sdfsdf"));
+}
+
+DECLARE_OOP_TEST(string_test_move_assigment_operator2) {
+	MyString s1 = MyString{ "HelloworldHelloworld" };
+
+	MyString s2{ "sdfsdfsdfsdfsdfsdf" };
+
+	s1 = std::move(s2);
+
+	assert(!strcmp(s1.c_str(), "sdfsdfsdfsdfsdfsdf"));
+}
+
+DECLARE_OOP_TEST(string_test_move_assigment_operator3) {
+	MyString s1 = MyString{ "Helloworld" };
+
+	MyString s2{ "sdfsdfsdfsdfsdfsdf" };
+
+	s1 = std::move(s2);
+
+	assert(!strcmp(s1.c_str(), "sdfsdfsdfsdfsdfsdf"));
+}
+
+DECLARE_OOP_TEST(string_test_move_assigment_operator4) {
+	MyString s1 = MyString{ "sdfsdfsdfsdfsdfsdf" };
+
+	MyString s2{ "Helloworld" };
+
+	s1 = std::move(s2);
+
+	assert(!strcmp(s1.c_str(), "Helloworld"));
 }

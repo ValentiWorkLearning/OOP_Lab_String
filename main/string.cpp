@@ -5,32 +5,33 @@
 */
 MyString::MyString()
 {
-	RequestMemoryOfString(0, true);
-	GetCurentMemoryBuffer()[0] = NULL;
+	InitBuffer();
 }
 
 MyString::MyString(const char *_string)
 {
-	RequestMemoryOfString(strlen(_string), true);
+	InitBuffer();
+	RequestMemoryOfString(strlen(_string));
 	memcpy(GetCurentMemoryBuffer(), _string, strlen(_string) + 1);
 }
 
-MyString::MyString(long _N)
+MyString::MyString(long _N) 
 {
 	if (_N < 0L) {
 		throw std::exception("Incorrect size");
 	}
-	RequestMemoryOfString(_N, true);
+	InitBuffer();
+	RequestMemoryOfString(_N);
 	GetCurentMemoryBuffer()[0] = NULL;
 }
 
 /*!
 * Copy constructor
 */
-MyString::MyString(const  MyString & _string)
+MyString::MyString(const  MyString & _string) :MyString()
 {
 	/**Create a copy.*/
-	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()), true);
+	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()));
 	memcpy(GetCurentMemoryBuffer(), _string.GetCurentMemoryBuffer(), strlen(_string.GetCurentMemoryBuffer()) + 1);
 }
 
@@ -52,18 +53,20 @@ MyString & MyString::operator = (const MyString & _string)
 * Move constructor
 */
 MyString::MyString(MyString && _string)
-	:m_DataStart(_string.m_DataStart),
-	m_EndOfStorage(_string.m_EndOfStorage),
-	m_DataFinish(_string.m_DataFinish)
 {
 
-	memcpy(m_StaticBuffer, _string.m_StaticBuffer, strlen(_string.m_StaticBuffer) + 1);
 	if (_string.IsMemAllocate()) {
+		m_EndOfStorage = _string.m_EndOfStorage;
+		m_DataStart = _string.m_DataStart;
+		m_DataFinish = _string.m_DataFinish;
 		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
 	}
 	else {
 		m_DataStart = m_StaticBuffer;
 		m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
+
+		memcpy(m_StaticBuffer, _string.m_StaticBuffer, MAX_STATIC_SIZE);
+
 		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
 	}
 
@@ -78,10 +81,29 @@ MyString & MyString::operator  = (MyString && _string)
 		return *this;
 	}
 
-	std::swap(m_DataStart, _string.m_DataStart);
-	std::swap(m_DataFinish, _string.m_DataFinish);
-	std::swap(m_EndOfStorage, _string.m_EndOfStorage);
-	std::swap(m_StaticBuffer, _string.m_StaticBuffer);
+	if (_string.IsMemAllocate()) {
+		if (!IsMemAllocate()) {
+			reserve(_string.length());
+		}
+		std::swap(m_EndOfStorage, _string.m_EndOfStorage);
+		std::swap(m_DataStart, _string.m_DataStart);
+		std::swap(m_DataFinish, _string.m_DataFinish);
+	}
+	else {
+		if (IsMemAllocate()) {
+			_string.reserve(length());
+			std::swap(m_EndOfStorage, _string.m_EndOfStorage);
+			std::swap(m_DataStart, _string.m_DataStart);
+			std::swap(m_DataFinish, _string.m_DataFinish);
+		}
+		else {
+			std::swap(m_StaticBuffer, _string.m_StaticBuffer);
+			std::swap(m_DataFinish, _string.m_DataFinish);
+			m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
+			_string.m_DataFinish = _string.m_DataStart + MAX_STATIC_SIZE;
+		
+		}
+	}
 	return *this;
 }
 
@@ -125,7 +147,7 @@ char & MyString::operator[](long _index)
 */
 void MyString::ExpandMultipleTwoStringBuffer(long _strLength, char* _stringToCopy)
 {
-	long tempCapacity = capacity();
+	long tempCapacity = capacity() + 1;
 	while (tempCapacity <= _strLength + 1)
 	{
 		tempCapacity *= 2;
@@ -140,28 +162,23 @@ void MyString::ExpandMultipleTwoStringBuffer(long _strLength, char* _stringToCop
 /*!
 * Reqyest free memory (size == _strlen) in string, second parameter - if true -only allocate  new memory
 */
-void MyString::RequestMemoryOfString(long _strlen, bool _allocateNewMemory)
+void MyString::RequestMemoryOfString(long _strlen)
 {
-	if (_allocateNewMemory) {
-		if (_strlen < MAX_STATIC_SIZE) {
-			m_DataStart = m_StaticBuffer;
-			m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
-		}
-		else {
-			m_EndOfStorage = new char[_strlen + 1];
-			m_DataStart = m_EndOfStorage;
-			m_DataFinish = m_EndOfStorage + _strlen + 1;
-		}
+	if (capacity() + 1 < _strlen + 1) {
+		long currentCapacity = capacity() + 1;
+		char * tempString = new char[length() + 1];
+		memcpy(tempString, GetCurentMemoryBuffer(), length() + 1);
+		if (IsMemAllocate())delete[] m_EndOfStorage;
+		ExpandMultipleTwoStringBuffer(_strlen, tempString);
+		delete[] tempString;
 	}
-	else {
-		if (capacity() < _strlen + 1) {
-			char * tempString = new char[length() + 1];
-			memcpy(tempString, GetCurentMemoryBuffer(), length() + 1);
-			if (IsMemAllocate())delete[] m_EndOfStorage;
-			ExpandMultipleTwoStringBuffer(_strlen + strlen(tempString) + 1, tempString);
-			delete[] tempString;
-		}
-	}
+}
+
+void MyString::InitBuffer(void)
+{
+	m_DataStart = m_StaticBuffer;
+	m_DataFinish = m_StaticBuffer + MAX_STATIC_SIZE;
+	GetCurentMemoryBuffer()[0] = NULL;
 }
 
 char * MyString::GetCurentMemoryBuffer()const
@@ -192,16 +209,7 @@ void MyString::clear()
 */
 void MyString::reserve(long _N)
 {
-	char * tempString = new char[length() + 1];
-
-	memcpy(tempString, GetCurentMemoryBuffer(), length() + 1);
-
-	if (IsMemAllocate()) delete m_EndOfStorage;
-
-	RequestMemoryOfString(_N + capacity(), true);
-	memcpy(GetCurentMemoryBuffer(), tempString, strlen(tempString) + 1);
-
-	delete[] tempString;
+	RequestMemoryOfString(_N);
 }
 
 /*!
@@ -231,11 +239,6 @@ void MyString::erase(long pos, long len)
 	char* tempString = new char[length() + 1 - len];
 
 	memcpy(tempString, GetCurentMemoryBuffer() + pos + len, length() + 1 - len);
-
-	for (long i = pos; i < len; i++) {
-		begin()[pos + i] = ' ';
-	}
-
 	memcpy(GetCurentMemoryBuffer() + pos, tempString, strlen(tempString) + 1);
 	delete[] tempString;
 }

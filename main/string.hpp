@@ -22,7 +22,8 @@ private:
 	bool IsMemAllocate();
 
 	void ExpandMultipleTwoStringBuffer(long _strLength, char * _stringToCopy);
-	void RequestMemoryOfString(long _strlen, bool _allocateNewMemory = false);
+	void RequestMemoryOfString(long _strlen);
+	void InitBuffer(void);
 	char * GetCurentMemoryBuffer()const;
 public:
 
@@ -114,7 +115,7 @@ inline char * MyString::c_str()
 */
 inline long MyString::capacity()const
 {
-	long stringCapacity = m_DataFinish - m_DataStart-1;
+	long stringCapacity = m_DataFinish - m_DataStart - 1;
 	return stringCapacity;
 }
 
