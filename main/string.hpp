@@ -21,16 +21,16 @@ private:
 	char* m_DataFinish;
 	bool IsMemAllocate();
 
-	void ExpandMultipleTwoStringBuffer( long _strLength, char * _stringToCopy);
+	void ExpandMultipleTwoStringBuffer(long _strLength, char * _stringToCopy);
 	void RequestMemoryOfString(long _strlen, bool _allocateNewMemory = false);
-    char * GetCurentMemoryBuffer()const;
+	char * GetCurentMemoryBuffer()const;
 public:
-	
-	MyString( );
-	
-	MyString( const char * _string);
 
-    MyString( long _N );
+	MyString();
+
+	MyString(const char * _string);
+
+	MyString(long _N);
 
 	//Operators
 
@@ -48,27 +48,27 @@ public:
 
 	//Methods
 	long   length()const;
-	
+
 	long   capacity()const;
-	
+
 	char * c_str();
-	
+
 	void   clear();
-	
+
 	bool   empty();
-	
+
 	void   reserve(long _N);
-	
+
 	char * begin() const;
-	
+
 	char * end();
-	
+
 	void   insert(long pos, const char * data);
 
 	void   erase(long pos, long len);
 
 	MyString substring(long pos, long len);
-	
+
 	~MyString();
 };
 
@@ -76,11 +76,11 @@ MyString operator "" _s(const char *_string, std::size_t _size);
 
 
 /*!
-* Return true if string is empty 
+* Return true if string is empty
 */
 inline bool MyString::MyString::empty()
 {
-	if(length() == 0)return true;
+	if (length() == 0)return true;
 	return false;
 
 }
@@ -114,7 +114,7 @@ inline char * MyString::c_str()
 */
 inline long MyString::capacity()const
 {
-	long stringCapacity = m_DataFinish - m_DataStart;
+	long stringCapacity = m_DataFinish - m_DataStart-1;
 	return stringCapacity;
 }
 

@@ -3,46 +3,46 @@
 /*!
 * Constructors
 */
-MyString::MyString( )
+MyString::MyString()
 {
 	RequestMemoryOfString(0, true);
 	GetCurentMemoryBuffer()[0] = NULL;
 }
 
-MyString::MyString( const char *_string) 
+MyString::MyString(const char *_string)
 {
-	RequestMemoryOfString(strlen(_string),true);
-	memcpy(GetCurentMemoryBuffer(), _string , strlen(_string) + 1);
+	RequestMemoryOfString(strlen(_string), true);
+	memcpy(GetCurentMemoryBuffer(), _string, strlen(_string) + 1);
 }
 
-MyString::MyString(long _N) 
+MyString::MyString(long _N)
 {
 	if (_N < 0L) {
 		throw std::exception("Incorrect size");
 	}
-	RequestMemoryOfString(_N-1, true);
+	RequestMemoryOfString(_N, true);
 	GetCurentMemoryBuffer()[0] = NULL;
 }
 
 /*!
 * Copy constructor
 */
-MyString::MyString(const  MyString & _string) 
+MyString::MyString(const  MyString & _string)
 {
 	/**Create a copy.*/
-	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()),true);
+	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()), true);
 	memcpy(GetCurentMemoryBuffer(), _string.GetCurentMemoryBuffer(), strlen(_string.GetCurentMemoryBuffer()) + 1);
 }
 
 /*!
 * Copy assigment operator
 */
-MyString & MyString::operator = (const MyString & _string) 
+MyString & MyString::operator = (const MyString & _string)
 {
-//**<Check self-appropriation  * */
+	//**<Check self-appropriation  * */
 	if (&_string == this) {
-			return *this;
-		}
+		return *this;
+	}
 	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()));
 	memcpy(GetCurentMemoryBuffer(), _string.GetCurentMemoryBuffer(), strlen(_string.GetCurentMemoryBuffer()) + 1);
 	return *this;
@@ -56,8 +56,8 @@ MyString::MyString(MyString && _string)
 	m_EndOfStorage(_string.m_EndOfStorage),
 	m_DataFinish(_string.m_DataFinish)
 {
-		
-	memcpy(m_StaticBuffer,_string.m_StaticBuffer,strlen(_string.m_StaticBuffer) + 1);
+
+	memcpy(m_StaticBuffer, _string.m_StaticBuffer, strlen(_string.m_StaticBuffer) + 1);
 	if (_string.IsMemAllocate()) {
 		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
 	}
@@ -66,23 +66,23 @@ MyString::MyString(MyString && _string)
 		m_DataFinish = m_DataStart + MAX_STATIC_SIZE;
 		_string.m_EndOfStorage = _string.m_DataStart = _string.m_DataFinish = nullptr;
 	}
-	
+
 }
 
 /*!
 * Move operator
 */
-MyString & MyString::operator  = (MyString && _string) 
+MyString & MyString::operator  = (MyString && _string)
 {
 	if (&_string == this) {
-		return * this;
+		return *this;
 	}
-	
+
 	std::swap(m_DataStart, _string.m_DataStart);
 	std::swap(m_DataFinish, _string.m_DataFinish);
 	std::swap(m_EndOfStorage, _string.m_EndOfStorage);
 	std::swap(m_StaticBuffer, _string.m_StaticBuffer);
-	return * this;
+	return *this;
 }
 
 /*!
@@ -90,8 +90,8 @@ MyString & MyString::operator  = (MyString && _string)
 */
 MyString & MyString::operator += (MyString _string) {
 	RequestMemoryOfString(length() + _string.length() + 1);
-	strcat_s(GetCurentMemoryBuffer(),capacity(),_string.GetCurentMemoryBuffer());
-return  * this;
+	strcat_s(GetCurentMemoryBuffer(), capacity(), _string.GetCurentMemoryBuffer());
+	return  *this;
 }
 
 MyString MyString::operator+(const MyString _string) const
@@ -106,7 +106,7 @@ MyString MyString::operator+(const MyString _string) const
 */
 char MyString::operator[](long _index) const
 {
-	if (_index > length()-1) {
+	if (_index > length() - 1) {
 		throw std::logic_error("Out of range");
 	}
 	return begin()[_index];
@@ -123,12 +123,12 @@ char & MyString::operator[](long _index)
 /*!
 * Expand string buffer multiple 2
 */
-void MyString::ExpandMultipleTwoStringBuffer(long _strLength,char* _stringToCopy)
+void MyString::ExpandMultipleTwoStringBuffer(long _strLength, char* _stringToCopy)
 {
 	long tempCapacity = capacity();
 	while (tempCapacity <= _strLength + 1)
 	{
-		tempCapacity *=2;
+		tempCapacity *= 2;
 	}
 
 	m_EndOfStorage = new char[tempCapacity];
@@ -140,7 +140,7 @@ void MyString::ExpandMultipleTwoStringBuffer(long _strLength,char* _stringToCopy
 /*!
 * Reqyest free memory (size == _strlen) in string, second parameter - if true -only allocate  new memory
 */
-void MyString::RequestMemoryOfString(long _strlen, bool _allocateNewMemory )
+void MyString::RequestMemoryOfString(long _strlen, bool _allocateNewMemory)
 {
 	if (_allocateNewMemory) {
 		if (_strlen < MAX_STATIC_SIZE) {
@@ -164,9 +164,9 @@ void MyString::RequestMemoryOfString(long _strlen, bool _allocateNewMemory )
 	}
 }
 
- char * MyString::GetCurentMemoryBuffer()const
-{ 
-	if(m_DataStart!=m_StaticBuffer)return m_EndOfStorage;
+char * MyString::GetCurentMemoryBuffer()const
+{
+	if (m_DataStart != m_StaticBuffer)return m_EndOfStorage;
 	return m_DataStart;
 }
 
@@ -184,7 +184,7 @@ void MyString::clear()
 		}
 	}
 	m_DataStart = m_StaticBuffer;
-	m_DataFinish = m_StaticBuffer+MAX_STATIC_SIZE;
+	m_DataFinish = m_StaticBuffer + MAX_STATIC_SIZE;
 }
 
 /*!
@@ -193,14 +193,14 @@ void MyString::clear()
 void MyString::reserve(long _N)
 {
 	char * tempString = new char[length() + 1];
-	
-	memcpy(tempString, GetCurentMemoryBuffer(), length()+1);
-	
+
+	memcpy(tempString, GetCurentMemoryBuffer(), length() + 1);
+
 	if (IsMemAllocate()) delete m_EndOfStorage;
 
-	RequestMemoryOfString(_N+capacity()-1, true);
+	RequestMemoryOfString(_N + capacity(), true);
 	memcpy(GetCurentMemoryBuffer(), tempString, strlen(tempString) + 1);
-	
+
 	delete[] tempString;
 }
 
@@ -208,17 +208,17 @@ void MyString::reserve(long _N)
 * Insert char * to position in string
 */
 void MyString::insert(long pos, const char * data) {
-	
+
 	if (pos<0 || pos >length())throw std::logic_error("Out of range");
-	char * tempString = new char [length()-pos+1];
+	char * tempString = new char[length() - pos + 1];
 
 	RequestMemoryOfString(pos + strlen(data) + length());
-	
+
 	memcpy(tempString, GetCurentMemoryBuffer() + pos, strlen(begin() + pos) + 1);
 	memcpy(GetCurentMemoryBuffer() + pos, data, strlen(data));
 	memcpy(GetCurentMemoryBuffer() + pos + strlen(data), tempString, strlen(tempString) + 1);
 
-	delete [] tempString;
+	delete[] tempString;
 }
 
 /*!
@@ -226,12 +226,12 @@ void MyString::insert(long pos, const char * data) {
 */
 void MyString::erase(long pos, long len)
 {
-	if(pos+len>length()||pos<0||len<0)throw std::logic_error("Out of range");
-	
+	if (pos + len>length() || pos<0 || len<0)throw std::logic_error("Out of range");
+
 	char* tempString = new char[length() + 1 - len];
-	
+
 	memcpy(tempString, GetCurentMemoryBuffer() + pos + len, length() + 1 - len);
-	
+
 	for (long i = pos; i < len; i++) {
 		begin()[pos + i] = ' ';
 	}
@@ -241,13 +241,13 @@ void MyString::erase(long pos, long len)
 }
 
 /*!
-* Return copy of original string 
+* Return copy of original string
 */
 MyString MyString::substring(long pos, long len)
 {
-	if ((len == -1)&&(pos>=0)) {
-		char*tempString = new char[length()-pos+1];
-		
+	if ((len == -1) && (pos >= 0)) {
+		char*tempString = new char[length() - pos + 1];
+
 		memcpy(tempString, begin() + pos, length() - pos + 1);
 
 		MyString returnString{ tempString };
@@ -258,14 +258,14 @@ MyString MyString::substring(long pos, long len)
 	}
 
 	if (pos + len>length() || pos<0 || len<0)throw std::logic_error("Out of range");
-		
-	char*tempString = new char[pos + len+1];
-	
+
+	char*tempString = new char[pos + len + 1];
+
 	for (int i = 0; i < pos + len + 1; i++) {
 		tempString[i] = NULL;
 	}
 	memcpy(tempString, GetCurentMemoryBuffer() + pos, len);
-	
+
 	MyString returnString{ tempString };
 	delete[] tempString;
 	return  returnString;
@@ -274,9 +274,9 @@ MyString MyString::substring(long pos, long len)
 /*!
 * Destructor
 */
-MyString::~MyString() 
+MyString::~MyString()
 {
-	if(IsMemAllocate())delete [] this->m_EndOfStorage;
+	if (IsMemAllocate())delete[] this->m_EndOfStorage;
 }
 
 /*!
@@ -284,5 +284,5 @@ MyString::~MyString()
 */
 MyString operator"" _s(const char * _string, std::size_t _size)
 {
-	return MyString( _string);
+	return MyString(_string);
 }

@@ -9,18 +9,18 @@ DECLARE_OOP_TEST(string_test_create_string_1) {
 
 DECLARE_OOP_TEST(string_test_create_string_3) {
 	MyString s1{ 0L };
-	assert(s1.capacity() == 16);
+	assert(s1.capacity() == 15);
 }
 
 DECLARE_OOP_TEST(string_test_create_string_4) {
 	MyString s1{ "Hello World" };
-	assert(s1.capacity() == 16);
+	assert(s1.capacity() == 15);
 	assert(!strcmp(s1.c_str(), "Hello World"));
 }
 
 DECLARE_OOP_TEST(string_test_create_string_5) {
 	MyString s1{ "Hello World Hello World" };
-	assert(s1.capacity() == 24);
+	assert(s1.capacity() == 23);
 	assert(!strcmp(s1.c_str(), "Hello World Hello World"));
 }
 
@@ -41,7 +41,7 @@ DECLARE_OOP_TEST(string_test_copy_constructor_1) {
 	MyString s1{ "Hello World123123123" };
 	MyString s2{ 50 };
 	s2 = s1;
-	assert( !strcmp ( s1.c_str(), s2.c_str() ) );
+	assert(!strcmp(s1.c_str(), s2.c_str()));
 	assert(s2.capacity() == 50);
 }
 
@@ -58,26 +58,26 @@ DECLARE_OOP_TEST(string_test_copy_constructor_3) {
 	MyString s2{ 0L };
 	s2 = s1;
 	assert(!strcmp(s1.c_str(), s2.c_str()));
-	assert(s2.capacity() == 16);
+	assert(s2.capacity() == 15);
 };
 
 DECLARE_OOP_TEST(string_test_copy_constructor_4) {
 	MyString s1{ "Hello Worldello World123123123" };
-	MyString s2= s1;
+	MyString s2 = s1;
 	assert(!strcmp(s1.c_str(), s2.c_str()));
 }
 
 DECLARE_OOP_TEST(string_test_reserve_test_1) {
 	MyString s1;
 	s1.reserve(100);
-	assert(s1.capacity() == 116);
+	assert(s1.capacity() == 115);
 	assert(s1.empty());
 }
 
 DECLARE_OOP_TEST(string_test_reserve_test_2) {
 	MyString s1{ "Hello World" };
 	s1.reserve(100);
-	assert(s1.capacity() == 116);
+	assert(s1.capacity() == 115);
 	assert(!strcmp(s1.c_str(), "Hello World"));
 }
 
@@ -152,13 +152,13 @@ DECLARE_OOP_TEST(string_test_insert_test_4) {
 }
 
 DECLARE_OOP_TEST(string_test_erase_test_1) {
-	MyString s1{"Hello World"};
+	MyString s1{ "Hello World" };
 	s1.erase(3, 5);
-	assert(!strcmp(s1.c_str(),"Helrld"));
+	assert(!strcmp(s1.c_str(), "Helrld"));
 }
 
 DECLARE_OOP_TEST(string_test_erase_test_2) {
-	MyString s1{"Hello World"};
+	MyString s1{ "Hello World" };
 	try
 	{
 		s1.erase(20, 2);
@@ -186,7 +186,7 @@ DECLARE_OOP_TEST(string_test_substring_1) {
 DECLARE_OOP_TEST(string_test_substring_2) {
 	MyString s1{ "Hello World" };
 	MyString s2 = s1.substring(0, 5);
-	assert(!strcmp(s2.c_str(),"Hello"));
+	assert(!strcmp(s2.c_str(), "Hello"));
 }
 
 DECLARE_OOP_TEST(string_test_substring_3) {
