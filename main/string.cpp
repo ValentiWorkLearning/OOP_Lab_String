@@ -28,8 +28,9 @@ MyString::MyString(long _N)
 /*!
 * Copy constructor
 */
-MyString::MyString(const  MyString & _string) :MyString()
+MyString::MyString(const  MyString & _string)
 {
+	InitBuffer();
 	/**Create a copy.*/
 	RequestMemoryOfString(strlen(_string.GetCurentMemoryBuffer()));
 	memcpy(GetCurentMemoryBuffer(), _string.GetCurentMemoryBuffer(), strlen(_string.GetCurentMemoryBuffer()) + 1);
